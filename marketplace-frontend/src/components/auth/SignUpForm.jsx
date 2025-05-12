@@ -1,14 +1,14 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router";
 import { ChevronLeftIcon, EyeCloseIcon, EyeIcon } from "../../icons";
-import Input from "../form/input/InputField";
-import Checkbox from "../form/input/Checkbox";
+import Input from "../template/form/input/InputField";
+import Checkbox from "../template/form/input/Checkbox";
 import { getText } from "../../config/texts/texts";
 import { useFormik } from "formik";
 import { initialValues, validationSchema } from "../../config/forms/signUpForm";
 import useAuth from "../../hooks/context/useAuth";
-import Select from "../form/Select";
-import Button from "../ui/button/Button";
+import Select from "../template/form/Select";
+import Button from "../template/ui/button/Button";
 
 export default function SignUpForm() {
   const authContext = useAuth();

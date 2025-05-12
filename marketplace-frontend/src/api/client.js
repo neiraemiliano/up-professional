@@ -17,7 +17,6 @@ api.interceptors.request.use((cfg) => {
 api.interceptors.response.use(
   (r) => r,
   (err) => {
-    console.log("🚀 ~ err:", err);
     if (err.response.status === 401) localStorage.removeItem("token");
     return Promise.reject(err.response.data);
   }

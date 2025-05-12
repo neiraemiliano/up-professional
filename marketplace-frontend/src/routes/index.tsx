@@ -1,9 +1,9 @@
 // src/routes/index.jsx
 import { Route, BrowserRouter as Router, Routes } from "react-router";
-import { ScrollToTop } from "../components/common/ScrollToTop";
+import { ScrollToTop } from "../components/template/common/ScrollToTop";
 import AppLayout from "../layout/AppLayout";
 import { routes } from "./routeConfig";
-import PrivateRoute from "../components/PrivateRoute";
+import PrivateRoute from "../components/PrivateRoute/PrivateRoute";
 
 const AppRoutes = () => {
   return (

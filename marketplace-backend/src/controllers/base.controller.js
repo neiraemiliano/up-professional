@@ -5,7 +5,7 @@ function generateController(service) {
   return {
     getAll: async (req, res, next) => {
       try {
-        const items = await service.findAll();
+        const items = await service.findAll(req.query);
         res.json(items);
       } catch (err) {
         next(err);

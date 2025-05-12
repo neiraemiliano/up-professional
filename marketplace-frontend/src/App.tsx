@@ -1,5 +1,5 @@
 import { ThemeProvider } from "./context/ThemeContext";
-import PageMeta, { AppWrapper } from "./components/common/PageMeta";
+import PageMeta, { AppWrapper } from "./components/template/common/PageMeta";
 import AppRoutes from "./routes";
 import { AuthProvider } from "./context/AuthContext";
 import { getText } from "./config/texts/texts";

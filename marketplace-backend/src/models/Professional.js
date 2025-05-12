@@ -6,7 +6,6 @@ class Professional {
     this.experience = experience;
     this.createdAt = createdAt;
   }
-  // Métodos de dominio propios
 }
 
 module.exports = Professional;

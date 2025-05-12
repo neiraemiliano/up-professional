@@ -1,10 +1,10 @@
 class Location {
-  constructor({ id, professionalId, city, latitude, longitude }) {
+  constructor({ id, city, province, country, postalCode }) {
     this.id = id;
-    this.professionalId = professionalId;
     this.city = city;
-    this.latitude = latitude;
-    this.longitude = longitude;
+    this.province = province;
+    this.country = country;
+    this.postalCode = postalCode;
   }
 }
 

@@ -3,6 +3,9 @@ layer(base);
 
 @import "tailwindcss";
 
+.hide-scroll::-webkit-scrollbar { display:none; }
+.hide-scroll { -ms-overflow-style:none; scrollbar-width:none; }
+
 @custom-variant dark (&:is(.dark *));
 
 @theme {

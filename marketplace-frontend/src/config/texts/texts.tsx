@@ -1,9 +1,11 @@
-// src/config/texts.ts
-
-// 1️⃣ Objeto con textos por defecto. Agrega aquí todas las claves y sus valores.
 export const defaultTexts = {
-  appTitle: "Up Professional",
-  loading: "Cargando",
+  appTitle: "UpProfessional",
+  becomeProfessional: "Soy profesional",
+  findProfessional: "Buscar profesional",
+  requestQuote: "Solicitar presupuesto",
+  howItWorks: "Como funciona",
+  faq: "FAQ",
+  loading: "Cargando...",
   signIn: "Iniciar sesión",
   signInDescription: "Ingresa tu email y contraseña para iniciar sesión",
   signInWithGoogle: "Iniciar sesión con Google",
@@ -21,6 +23,7 @@ export const defaultTexts = {
   name: "Nombre",
   lastName: "Apellido",
   email: "Email",
+  phone: "Teléfono",
   password: "Contraseña",
   confirmPassword: "Confirmar contraseña",
   signUpWithGoogle: "Registrate con Google",
@@ -33,14 +36,15 @@ export const defaultTexts = {
   whoYouAre: "¿Que tipo de usuario eres?",
   serviceType: "Tipo de servicio",
   zone: "Zona",
-
-  // ... añade más textos según necesidad
+  selectLocation: "Zona/Localidad",
+  service: "Servicio",
+  reviews: "Reseñas",
+  noFoundProfessional: "No se encontraron el profesional",
+  personalInfo: "Información personal",
 } as const;
 
-// 2️⃣ Tipo de las claves para autocompletado y seguridad de tipos
 export type TextKey = keyof typeof defaultTexts;
 
-// 3️⃣ Función para obtener el texto por clave
 export function getText(key: TextKey): string {
   return defaultTexts[key] ?? key;
 }

@@ -12,6 +12,7 @@ model User {
   name          String
   lastName      String         @default("")
   email         String         @unique
+  phone         String         @default("")
   password      String
   role          String
   createdAt     DateTime       @default(now())
@@ -21,20 +22,22 @@ model User {
 }
 
 model Professional {
-  id          Int           @id @default(autoincrement())
-  userId      Int           @unique
-  description String?
-  experience  Int?
-  createdAt   DateTime      @default(now())
-  User        User          @relation("UserToProfessional", fields: [userId], references: [id])
-  Services    Service[]
-  Locations   Location?
-  Reviews     Review[]
+  id           Int       @id @default(autoincrement())
+  userId       Int       @unique
+  description  String?
+  experience   Int?
+  createdAt    DateTime  @default(now())
+  locationId   Int?
+  location     Location? @relation(fields: [locationId], references: [id])
+  User         User      @relation("UserToProfessional", fields: [userId], references: [id])
+  Services     Service[]
+  Reviews      Review[]
 }
 
 model Category {
   id       Int        @id @default(autoincrement())
-  name     String
+  name     String     
+  value    String     @default("")
   icon     String?
   Services Service[]
 }
@@ -75,10 +78,10 @@ model Review {
 }
 
 model Location {
-  id               Int          @id @default(autoincrement())
-  professionalId   Int          @unique
-  city             String?
-  latitude         Float?
-  longitude        Float?
-  Professional     Professional @relation(fields: [professionalId], references: [id])
+  id          Int       @id @default(autoincrement())
+  city        String    
+  province    String    @default("")
+  country     String    @default("Argentina")
+  postalCode  String    @default("")
+  professionals Professional[]
 }

@@ -31,12 +31,13 @@ app.use(express.json());
 app.use("/api/auth", authRoutes);
 // app.use("/api/admin", authMiddleware, requireRole("admin"), adminRoutes);
 app.use("/api/users", userRoutes);
-app.use(
-  "/api/professionals",
-  authMiddleware,
-  requireRole("professional"),
-  professionalRoutes
-);
+// app.use(
+//   "/api/professionals",
+//   authMiddleware,
+//   requireRole("professional"),
+//   professionalRoutes
+// );
+app.use("/api/professionals", professionalRoutes);
 app.use("/api/categories", categoryRoutes);
 app.use("/api/services", serviceRoutes);
 app.use("/api/bookings", bookingRoutes);

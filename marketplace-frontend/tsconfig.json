@@ -1,7 +1,10 @@
 {
   "compilerOptions": {
     "allowJs": true,
+    "checkJs": true,
+    "jsx": "react-jsx"
   },
+  "include": ["src"],
   "files": [],
   "references": [
     { "path": "./tsconfig.app.json" },

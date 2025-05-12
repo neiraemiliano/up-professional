@@ -4,37 +4,59 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 /**
  * Crea un conjunto de hooks CRUD genéricos usando React Query.
  *
- * @param {string} key - clave de consulta (e.g. 'users')
- * @param {object} api - objeto con las funciones: fetchAll, fetchOne, create, update, remove
- * @returns {object} hooks: useList, useItem, useCreate, useUpdate, useDelete
+ * @param {string} key  Clave base para la query (p. ej. "users").
+ * @param {object} api  Funciones de la API:
+ *   - fetchAll(filters?)            -> Promise
+ *   - fetchOne(id)                  -> Promise
+ *   - create(data)                  -> Promise
+ *   - update(id, data)              -> Promise
+ *   - remove(id)                    -> Promise
+ *
+ * @returns {{ useList, useItem, useCreate, useUpdate, useDelete }}
  */
 export function createResourceHooks(key, api) {
-  const useList = () => useQuery([key], api.fetchAll);
+  /* ---------- LISTAR (filtros opcionales) ----------------------------- */
+  const useList = (filters = {}) =>
+    useQuery({
+      queryKey: [key, filters], // la queryKey incluye los filtros
+      queryFn: () => api.fetchAll(filters),
+    });
 
+  /* ---------- OBTENER UNO -------------------------------------------- */
   const useItem = (id) =>
-    useQuery([key, id], () => api.fetchOne(id), { enabled: !!id });
+    useQuery({
+      queryKey: [key, id],
+      queryFn: () => api.fetchOne(id),
+      enabled: !!id,
+    });
 
+  /* ---------- CREAR --------------------------------------------------- */
   const useCreate = () => {
     const qc = useQueryClient();
-    return useMutation(api.create, {
-      onSuccess: () => qc.invalidateQueries([key]),
+    return useMutation({
+      mutationFn: api.create,
+      onSuccess: () => qc.invalidateQueries({ queryKey: [key] }),
     });
   };
 
+  /* ---------- ACTUALIZAR --------------------------------------------- */
   const useUpdate = () => {
     const qc = useQueryClient();
-    return useMutation(({ id, data }) => api.update(id, data), {
+    return useMutation({
+      mutationFn: ({ id, data }) => api.update(id, data),
       onSuccess: (updated) => {
-        qc.invalidateQueries([key]);
-        qc.invalidateQueries([key, updated.id]);
+        qc.invalidateQueries({ queryKey: [key] });
+        qc.invalidateQueries({ queryKey: [key, updated.id] });
       },
     });
   };
 
+  /* ---------- ELIMINAR ------------------------------------------------ */
   const useDelete = () => {
     const qc = useQueryClient();
-    return useMutation(api.remove, {
-      onSuccess: () => qc.invalidateQueries([key]),
+    return useMutation({
+      mutationFn: api.remove,
+      onSuccess: () => qc.invalidateQueries({ queryKey: [key] }),
     });
   };
 

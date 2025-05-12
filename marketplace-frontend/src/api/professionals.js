@@ -1,7 +1,7 @@
 import api from "./client";
 
-export const fetchProfessionals = () =>
-  api.get("/professionals").then((r) => r.data);
+export const fetchProfessionals = (filters = {}) =>
+  api.get("/professionals", { params: filters }).then((r) => r.data);
 export const fetchProfessional = (id) =>
   api.get(`/professionals/${id}`).then((r) => r.data);
 export const createProfessional = (data) =>

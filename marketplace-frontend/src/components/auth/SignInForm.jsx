@@ -1,13 +1,13 @@
 import { useContext, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router";
 import { ChevronLeftIcon, EyeCloseIcon, EyeIcon } from "../../icons";
-import Input from "../form/input/InputField";
-import Checkbox from "../form/input/Checkbox";
-import Button from "../ui/button/Button";
+import Input from "../template/form/input/InputField";
+import Checkbox from "../template/form/input/Checkbox";
 import { useFormik } from "formik";
 import { AuthContext } from "../../context/AuthContext";
 import { initialValues, validationSchema } from "../../config/forms/signInForm";
 import { getText } from "../../config/texts/texts";
+import Button from "../template/ui/button/Button";
 
 export default function SignInForm() {
   const authContext = useContext(AuthContext);
