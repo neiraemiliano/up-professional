@@ -23,4 +23,13 @@ const loginSchema = Joi.object({
 router.post("/register", validateBody(registerSchema), register);
 router.post("/login", validateBody(loginSchema), login);
 
+// Rutas alternativas para compatibilidad
+router.post("/signup", validateBody(registerSchema), register);
+router.post("/signin", validateBody(loginSchema), login);
+
+// Ruta de prueba
+router.get("/test", (req, res) => {
+  res.json({ message: "Auth routes working", timestamp: new Date().toISOString() });
+});
+
 module.exports = router;

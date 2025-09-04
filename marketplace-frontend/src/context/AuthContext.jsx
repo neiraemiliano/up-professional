@@ -11,36 +11,114 @@ export function AuthProvider({ children }) {
   // === Login ===
   const loginMutation = useMutation({
     mutationFn: authAPI.login,
-    onSuccess: ({ token, user }) => {
-      localStorage.setItem("token", token);
-      localStorage.setItem("user", JSON.stringify(user));
-      setUser(user);
+    onSuccess: (response) => {
+      console.log("Login response:", response);
+      
+      // Manejar diferentes estructuras de respuesta
+      let token, user;
+      if (response.data) {
+        // Si viene envuelto en { data: { token, user } }
+        token = response.data.token;
+        user = response.data.user;
+      } else {
+        // Si viene directo como { token, user }
+        token = response.token;
+        user = response.user;
+      }
+      
+      if (token && user) {
+        localStorage.setItem("token", token);
+        localStorage.setItem("user", JSON.stringify(user));
+        authAPI.setToken(token);
+        setUser(user);
+      } else {
+        console.error("Invalid response structure:", response);
+      }
     },
+    onError: (error) => {
+      console.error("Login error:", error);
+    }
   });
 
   // === Register (si quieres auto-login tras registro) ===
   const registerMutation = useMutation({
     mutationFn: authAPI.register,
-    onSuccess: async ({ token, user }) => {
-      localStorage.setItem("token", token);
-      localStorage.setItem("user", JSON.stringify(user));
-      setUser(user);
+    onSuccess: (response) => {
+      console.log("Register response:", response);
+      
+      // Manejar diferentes estructuras de respuesta
+      let token, user, requiresOnboarding;
+      if (response.data) {
+        // Si viene envuelto en { data: { token, user, requiresOnboarding } }
+        token = response.data.token;
+        user = response.data.user;
+        requiresOnboarding = response.data.requiresOnboarding;
+      } else {
+        // Si viene directo como { token, user, requiresOnboarding }
+        token = response.token;
+        user = response.user;
+        requiresOnboarding = response.requiresOnboarding;
+      }
+      
+      if (token && user) {
+        localStorage.setItem("token", token);
+        localStorage.setItem("user", JSON.stringify(user));
+        authAPI.setToken(token);
+        setUser(user);
+        
+        // Store onboarding flag for professionals
+        if (requiresOnboarding) {
+          localStorage.setItem("requiresOnboarding", "true");
+        }
+      } else {
+        console.error("Invalid register response structure:", response);
+      }
     },
+    onError: (error) => {
+      console.error("Register error:", error);
+    }
   });
 
   useEffect(() => {
     const storedToken = localStorage.getItem("token");
     const storedUser = JSON.parse(localStorage.getItem("user") || "null");
+    
     if (storedToken && storedUser) {
+      console.log("Setting token from localStorage:", storedToken.substring(0, 20) + "...");
       authAPI.setToken(storedToken);
       setUser(storedUser);
+    } else {
+      console.log("No stored token/user found");
     }
+    
     setInitialized(true);
   }, []);
 
   // Exponer mutateAsync para poder await
-  const login = async (creds) => loginMutation.mutateAsync(creds);
-  const register = async (data) => registerMutation.mutateAsync(data);
+  const login = async (creds) => {
+    try {
+      return await loginMutation.mutateAsync(creds);
+    } catch (error) {
+      // Re-throw con estructura consistente
+      const errorMessage = error?.response?.data?.error || 
+                         error?.response?.data?.message || 
+                         error?.message || 
+                         "Error de autenticación";
+      throw new Error(errorMessage);
+    }
+  };
+  
+  const register = async (data) => {
+    try {
+      return await registerMutation.mutateAsync(data);
+    } catch (error) {
+      const errorMessage = error?.response?.data?.error || 
+                         error?.response?.data?.message || 
+                         error?.message || 
+                         "Error de registro";
+      throw new Error(errorMessage);
+    }
+  };
   const logout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("user");

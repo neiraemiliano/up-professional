@@ -1,17 +1,14 @@
-import PageMeta from "../../components/template/common/PageMeta";
 import AuthLayout from "./AuthPageLayout";
 import SignUpForm from "../../components/Auth/SignUpForm";
+import ProgressiveSignUpForm from "../../components/auth/ProgressiveSignUpForm";
 
 export default function SignUp() {
+  // Cambiar a ProgressiveSignUpForm para mejor UX
+  const useProgressiveForm = false;
+
   return (
-    <>
-      <PageMeta
-        title="React.js SignUp Dashboard | TailAdmin - Next.js Admin Dashboard Template"
-        description="This is React.js SignUp Tables Dashboard page for TailAdmin - React.js Tailwind CSS Admin Dashboard Template"
-      />
-      <AuthLayout>
-        <SignUpForm />
-      </AuthLayout>
-    </>
+    <AuthLayout>
+      {useProgressiveForm ? <ProgressiveSignUpForm /> : <SignUpForm />}
+    </AuthLayout>
   );
 }

@@ -27,11 +27,17 @@ class AuthService {
       ...userData,
       password: hash,
     });
-    const token = jwt.sign({ sub: user.id }, this.jwtSecret, {
+    const token = jwt.sign({ id: user.id, role: user.role }, this.jwtSecret, {
       expiresIn: this.jwtExpires,
     });
     delete user.password;
-    return { user, token };
+    
+    // Return different response for professional users to trigger onboarding
+    return { 
+      user, 
+      token,
+      requiresOnboarding: user.role === 'professional' 
+    };
   }
 
   async login({ email, password }) {

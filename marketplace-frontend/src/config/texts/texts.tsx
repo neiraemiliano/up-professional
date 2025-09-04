@@ -1,5 +1,5 @@
 export const defaultTexts = {
-  appTitle: "UpProfessional",
+  appTitle: "Home Fixed",
   becomeProfessional: "Soy profesional",
   findProfessional: "Buscar profesional",
   requestQuote: "Solicitar presupuesto",
@@ -19,6 +19,7 @@ export const defaultTexts = {
   signUpDescription: "Crea tu cuenta para comenzar",
   namePlaceholder: "Ingrese su nombre",
   lastNamePlaceholder: "Ingrese su apellido",
+  phonePlaceholder: "Ingrese su teléfono",
   or: "o",
   name: "Nombre",
   lastName: "Apellido",
@@ -37,10 +38,12 @@ export const defaultTexts = {
   serviceType: "Tipo de servicio",
   zone: "Zona",
   selectLocation: "Zona/Localidad",
-  service: "Servicio",
+  service: "Servicios",
   reviews: "Reseñas",
   noFoundProfessional: "No se encontraron el profesional",
   personalInfo: "Información personal",
+  publish: "Publicar",
+  portfolio: "Portafolio",
 } as const;
 
 export type TextKey = keyof typeof defaultTexts;

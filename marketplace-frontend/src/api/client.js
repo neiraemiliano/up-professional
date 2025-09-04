@@ -17,8 +17,15 @@ api.interceptors.request.use((cfg) => {
 api.interceptors.response.use(
   (r) => r,
   (err) => {
-    if (err.response.status === 401) localStorage.removeItem("token");
-    return Promise.reject(err.response.data);
+    if (err.response?.status === 401) {
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+      // Redirigir a login si estamos en una página protegida
+      if (window.location.pathname.includes('admin') || window.location.pathname.includes('dashboard')) {
+        window.location.href = '/signin';
+      }
+    }
+    return Promise.reject(err.response?.data || err);
   }
 );
 

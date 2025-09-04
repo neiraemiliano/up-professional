@@ -1,119 +1,137 @@
-import { ChevronLeft, ChevronRight, Star, User } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { Star, User, ThumbsUp, Calendar, Badge } from "lucide-react";
+import Carousel from "../../../components/Carousel/Carousel";
 
-export default function ReviewsCarousel({ reviews = [] }) {
-  const trackRef = useRef(null);
-  const [atStart, setAtStart] = useState(true);
-  const [atEnd, setAtEnd] = useState(true);
+export default function ReviewsList({ reviews = [], openModal }) {
+  if (!reviews.length) {
+    return (
+      <div className="text-center py-8">
+        <Star className="w-12 h-12 text-gray-400 mx-auto mb-3" />
+        <p className="text-gray-500 text-lg font-medium">Aún no hay reseñas.</p>
+        <p className="text-gray-400 text-sm">Sé el primero en compartir tu experiencia</p>
+      </div>
+    );
+  }
 
-  /* ---------- helpers ---------- */
-  const updateArrows = () => {
-    const el = trackRef.current;
-    if (!el) return;
-
-    const max = el.scrollWidth - el.clientWidth;
-    setAtStart(el.scrollLeft <= 0);
-    setAtEnd(el.scrollLeft >= max - 4);
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('es-AR', { 
+      year: 'numeric', 
+      month: 'long', 
+      day: 'numeric' 
+    });
   };
-
-  const scroll = (dir) => {
-    const el = trackRef.current;
-    if (!el) return;
-    const card = el.querySelector("li");
-    const gap = parseInt(getComputedStyle(el).columnGap || "16", 10);
-    const delta = (card?.clientWidth || 300) + gap;
-    el.scrollBy({ left: dir === "right" ? delta : -delta, behavior: "smooth" });
-  };
-
-  useEffect(() => {
-    updateArrows();
-
-    const el = trackRef.current;
-    el?.addEventListener("scroll", updateArrows, { passive: true });
-
-    const ro = new ResizeObserver(updateArrows);
-    ro.observe(el);
-
-    return () => {
-      el?.removeEventListener("scroll", updateArrows);
-      ro.disconnect();
-    };
-  }, []);
-
-  if (!reviews.length) return <p>Aún no hay reseñas.</p>;
 
   return (
-    <div className="relative w-full overflow-hidden">
-      {/* TRACK */}
-      <ul
-        ref={trackRef}
-        className="flex gap-4 overflow-x-auto scroll-smooth snap-x snap-mandatory  hide-scroll"
-      >
-        {reviews.map((r, index) => (
-          <li
-            key={`${r.id}-${index}`}
-            className="snap-start shrink-0 basis-[85%] sm:basis-1/2 lg:basis-1/3 xl:basis-1/4 max-w-xs
-                       h-60 border rounded-md p-5 bg-white shadow-sm flex flex-col"
-          >
-            {/* avatar + nombre + rating */}
-            <div className="flex items-center gap-3 mb-3">
-              {r.user?.avatarUrl ? (
-                <img
-                  src={r.user.avatarUrl}
-                  alt={r.user.name}
-                  className="w-10 h-10 rounded-full object-cover"
-                />
-              ) : (
-                <User className="w-10 h-10 p-2 rounded-full bg-gray-200 text-gray-500" />
-              )}
-              <div>
-                <p className="font-medium text-sm">
-                  {r.user?.name ?? "Anónimo"}
-                </p>
-                <div className="flex gap-0.5">
-                  {Array.from({ length: 5 }).map((_, i) => (
-                    <Star
-                      key={i}
-                      size={14}
-                      className={
-                        i < r.rating ? "text-yellow-400" : "text-gray-300"
-                      }
-                      fill={i < r.rating ? "currentColor" : "transparent"}
-                    />
-                  ))}
+    <Carousel className="gap-4">
+      {reviews.map((review, index) => (
+        <div
+          key={`${review.id}-${index}`}
+          onClick={openModal}
+          className="snap-start shrink-0 basis-[90%] sm:basis-1/2 lg:basis-1/3 max-w-sm cursor-pointer group"
+        >
+          <div className="bg-gradient-to-br from-white to-gray-50 border-2 border-gray-200 rounded-2xl p-6 shadow-lg hover:shadow-2xl transition-all duration-300 hover:border-orange-300 h-[280px] flex flex-col group-hover:bg-gradient-to-br group-hover:from-orange-50 group-hover:to-red-50">
+            {/* Header con usuario y rating */}
+            <div className="flex items-start gap-4 mb-4">
+              <div className="relative">
+                {review.user?.avatarUrl ? (
+                  <img
+                    src={review.user.avatarUrl}
+                    alt={review.user.name}
+                    className="w-12 h-12 rounded-full object-cover border-2 border-orange-200"
+                  />
+                ) : (
+                  <div className="w-12 h-12 rounded-full bg-gradient-to-br from-orange-100 to-red-100 border-2 border-orange-200 flex items-center justify-center">
+                    <User className="w-6 h-6 text-orange-600" />
+                  </div>
+                )}
+                {/* Badge de cliente verificado */}
+                <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-green-500 border-2 border-white rounded-full flex items-center justify-center">
+                  <div className="w-2 h-2 bg-white rounded-full"></div>
+                </div>
+              </div>
+              
+              <div className="flex-1 min-w-0">
+                <h4 className="font-bold text-gray-800 truncate">
+                  {review.user?.name ?? "Cliente verificado"}
+                </h4>
+                
+                {/* Rating con estrellas */}
+                <div className="flex items-center gap-2 mb-2">
+                  <div className="flex">
+                    {Array.from({ length: 5 }).map((_, i) => (
+                      <Star
+                        key={i}
+                        className={`w-4 h-4 ${
+                          i < review.rating 
+                            ? "text-yellow-400 fill-yellow-400" 
+                            : "text-gray-300"
+                        }`}
+                      />
+                    ))}
+                  </div>
+                  <span className="text-sm font-semibold text-gray-700">
+                    {review.rating}.0
+                  </span>
+                </div>
+
+                {/* Fecha y servicio */}
+                <div className="flex items-center gap-2 text-xs text-gray-500">
+                  <Calendar className="w-3 h-3" />
+                  <span>{formatDate(review.date)}</span>
+                  {review.service && (
+                    <>
+                      <span>•</span>
+                      <span className="bg-orange-100 text-orange-700 px-2 py-1 rounded-full font-medium">
+                        {review.service}
+                      </span>
+                    </>
+                  )}
                 </div>
               </div>
             </div>
 
-            {/* comentario */}
-            <p className="text-sm text-gray-700 overflow-auto line-clamp-[7]">
-              {r.comment}
-            </p>
-          </li>
-        ))}
-      </ul>
+            {/* Comentario */}
+            <div className="flex-1 mb-4">
+              <p className="text-gray-700 text-sm leading-relaxed line-clamp-4">
+                "{review.comment}"
+              </p>
+            </div>
 
-      {/* FLECHA IZQ */}
-      <button
-        onClick={() => scroll("left")}
-        disabled={atStart}
-        className="absolute left-2 top-1/2 -translate-y-1/2 z-10
-                   p-2 bg-white rounded-full shadow-md
-                   disabled:opacity-0 disabled:pointer-events-none"
-      >
-        <ChevronLeft size={20} />
-      </button>
+            {/* Footer con utilidad */}
+            <div className="flex items-center justify-between pt-4 border-t border-gray-200 group-hover:border-orange-200">
+              <div className="flex items-center gap-1 text-gray-500">
+                <ThumbsUp className="w-4 h-4" />
+                <span className="text-xs">
+                  {review.helpful || 0} útil{(review.helpful || 0) !== 1 ? 'es' : ''}
+                </span>
+              </div>
+              
+              <div className="flex items-center gap-2">
+                {/* Badge de review destacada */}
+                {review.rating === 5 && (
+                  <div className="bg-gradient-to-r from-orange-500 to-red-500 text-white px-2 py-1 rounded-full text-xs font-bold">
+                    ⭐ Destacada
+                  </div>
+                )}
+                
+                {/* Indicador de review reciente */}
+                {new Date(review.date) > new Date(Date.now() - 30 * 24 * 60 * 60 * 1000) && (
+                  <div className="bg-green-100 text-green-700 px-2 py-1 rounded-full text-xs font-semibold">
+                    Reciente
+                  </div>
+                )}
+              </div>
+            </div>
 
-      {/* FLECHA DER */}
-      <button
-        onClick={() => scroll("right")}
-        disabled={atEnd}
-        className="absolute right-2 top-1/2 -translate-y-1/2 z-10
-                   p-2 bg-white rounded-full shadow-md
-                   disabled:opacity-0 disabled:pointer-events-none"
-      >
-        <ChevronRight size={20} />
-      </button>
-    </div>
+            {/* Hover effect indicator */}
+            <div className="mt-3 text-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+              <span className="text-xs text-orange-600 font-medium">
+                Clic para ver detalles →
+              </span>
+            </div>
+          </div>
+        </div>
+      ))}
+    </Carousel>
   );
 }

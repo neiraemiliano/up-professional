@@ -39,12 +39,12 @@ export default tseslint.config(
 
     rules: {
       ...reactHooks.configs.recommended.rules,
+      "import/order": "off",
       "react/jsx-no-undef": ["error", { allowGlobals: true }],
       "react/react-in-jsx-scope": "off",
       "react/jsx-uses-react": "off",
       "react/prop-types": "off",
       // "import/no-unresolved": "error",
-      "import/order": ["warn", { "newlines-between": "always" }],
       "react-refresh/only-export-components": [
         "warn",
         { allowConstantExport: true },

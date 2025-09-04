@@ -1,0 +1,8 @@
+-- AlterTable
+ALTER TABLE "Review" ADD COLUMN     "aspectRatings" JSONB,
+ADD COLUMN     "helpful" INTEGER NOT NULL DEFAULT 0,
+ADD COLUMN     "isAnonymous" BOOLEAN NOT NULL DEFAULT false,
+ADD COLUMN     "service" TEXT,
+ADD COLUMN     "serviceDate" TIMESTAMP(3),
+ADD COLUMN     "updatedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+ADD COLUMN     "wouldRecommend" BOOLEAN NOT NULL DEFAULT true;
