@@ -1,5 +1,5 @@
 // src/components/PrivateRoute.tsx
-import React, { ReactNode } from "react";
+import { ReactNode } from "react";
 import { Navigate, useLocation } from "react-router";
 import { AuthContext } from "../../context/AuthContext";
 import { useContext } from "react";

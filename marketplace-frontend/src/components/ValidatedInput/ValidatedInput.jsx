@@ -1,5 +1,5 @@
 import { CheckCircle, AlertCircle, Info } from "lucide-react";
-import Input from "../template/form/input/InputField";
+import { InputField as Input } from "../base";
 import useRealTimeValidation from "../../hooks/useRealTimeValidation";
 
 const ValidatedInput = ({ 

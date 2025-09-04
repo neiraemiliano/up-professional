@@ -21,7 +21,7 @@ import {
   Zap,
   Clock
 } from "lucide-react";
-import Input from "../template/form/input/InputField";
+import { InputField as Input } from "../base";
 import Checkbox from "../template/form/input/Checkbox";
 import { useFormik } from "formik";
 import { AuthContext } from "../../context/AuthContext";
@@ -285,48 +285,36 @@ export default function SignInForm() {
             {/* Form */}
             <form onSubmit={formik.handleSubmit} className="space-y-6">
               {/* Email */}
-              <div className="relative">
-                <Input
-                  id="email"
-                  name="email"
-                  label={getText("email")}
-                  type="email"
-                  placeholder={getText("emailPlaceholder")}
-                  value={formik.values.email}
-                  onChange={formik.handleChange}
-                  error={formik.touched.email}
-                  hint={formik.touched.email && formik.errors.email}
-                  className="pl-10 border-gray-300 focus:border-orange-400 focus:ring-orange-200 rounded-xl"
-                />
-                <Mail className="absolute left-3 top-[calc(1.875rem+1.375rem)] h-5 w-5 text-orange-500 z-10" />
-              </div>
+              <Input
+                id="email"
+                name="email"
+                label={getText("email")}
+                type="email"
+                placeholder={getText("emailPlaceholder")}
+                value={formik.values.email}
+                onChange={formik.handleChange}
+                error={formik.touched.email && formik.errors.email}
+                hint={formik.touched.email && formik.errors.email}
+                leftIcon={Mail}
+                required
+              />
 
               {/* Password */}
-              <div className="relative">
-                <Input
-                  id="password"
-                  name="password"
-                  label={getText("password")}
-                  type={showPassword ? "text" : "password"}
-                  placeholder={getText("passwordPlaceholder")}
-                  value={formik.values.password}
-                  onChange={formik.handleChange}
-                  error={formik.touched.password}
-                  hint={formik.touched.password && formik.errors.password}
-                  className="pl-10 pr-10 border-gray-300 focus:border-orange-400 focus:ring-orange-200 rounded-xl"
-                />
-                <Lock className="absolute left-3 top-[calc(1.875rem+1.375rem)] h-5 w-5 text-orange-500 z-10" />
-                <span
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute z-30 right-3 top-[calc(1.875rem+1.375rem)] cursor-pointer text-gray-500 hover:text-orange-500 transition-colors"
-                >
-                  {showPassword ? (
-                    <EyeIcon className="h-5 w-5" />
-                  ) : (
-                    <EyeCloseIcon className="h-5 w-5" />
-                  )}
-                </span>
-              </div>
+              <Input
+                id="password"
+                name="password"
+                label={getText("password")}
+                type={showPassword ? "text" : "password"}
+                placeholder={getText("passwordPlaceholder")}
+                value={formik.values.password}
+                onChange={formik.handleChange}
+                error={formik.touched.password && formik.errors.password}
+                hint={formik.touched.password && formik.errors.password}
+                leftIcon={Lock}
+                rightIcon={showPassword ? EyeIcon : EyeCloseIcon}
+                onRightIconClick={() => setShowPassword(!showPassword)}
+                required
+              />
 
               {/* Remember Me & Forgot Password */}
               <div className="flex items-center justify-between">

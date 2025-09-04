@@ -25,7 +25,7 @@ import {
   Zap,
   Clock
 } from "lucide-react";
-import Input from "../template/form/input/InputField";
+import { InputField as Input } from "../base";
 import Checkbox from "../template/form/input/Checkbox";
 import { getText } from "../../config/texts/texts";
 import { useFormik } from "formik";
@@ -283,129 +283,114 @@ export default function SignUpForm() {
             <form onSubmit={formik.handleSubmit} className="space-y-6">
               {/* Name Fields */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="relative">
-                  <User className="absolute left-3 top-[calc(1.875rem+1.375rem)] h-5 w-5 text-orange-500 z-10" />
-                  <Input
-                    type="text"
-                    id="name"
-                    name="name"
-                    label={getText("name")}
-                    placeholder={getText("namePlaceholder")}
-                    onChange={formik.handleChange}
-                    error={formik.touched.name}
-                    hint={formik.touched.name && formik.errors.name}
-                    className="pl-10 border-gray-300 focus:border-orange-400 focus:ring-orange-200 rounded-xl"
-                  />
-                </div>
-                <div className="relative">
-                  <User className="absolute left-3 top-[calc(1.875rem+1.375rem)] h-5 w-5 text-orange-500 z-10" />
-                  <Input
-                    type="text"
-                    id="lastName"
-                    name="lastName"
-                    label={getText("lastName")}
-                    placeholder={getText("lastNamePlaceholder")}
-                    onChange={formik.handleChange}
-                    error={formik.touched.lastName}
-                    hint={formik.touched.lastName && formik.errors.lastName}
-                    className="pl-10 border-gray-300 focus:border-orange-400 focus:ring-orange-200 rounded-xl"
-                  />
-                </div>
+                <Input
+                  type="text"
+                  id="name"
+                  name="name"
+                  label={getText("name")}
+                  placeholder={getText("namePlaceholder")}
+                  value={formik.values.name}
+                  onChange={formik.handleChange}
+                  error={formik.touched.name && formik.errors.name}
+                  hint={formik.touched.name && formik.errors.name}
+                  leftIcon={User}
+                  required
+                />
+                <Input
+                  type="text"
+                  id="lastName"
+                  name="lastName"
+                  label={getText("lastName")}
+                  placeholder={getText("lastNamePlaceholder")}
+                  value={formik.values.lastName}
+                  onChange={formik.handleChange}
+                  error={formik.touched.lastName && formik.errors.lastName}
+                  hint={formik.touched.lastName && formik.errors.lastName}
+                  leftIcon={User}
+                  required
+                />
               </div>
 
               {/* Email */}
-              <div className="relative">
-                <Mail className="absolute left-3 top-[calc(1.875rem+1.375rem)] h-5 w-5 text-orange-500 z-10" />
-                <Input
-                  type="email"
-                  id="email"
-                  name="email"
-                  label={getText("email")}
-                  placeholder={getText("emailPlaceholder")}
-                  onChange={formik.handleChange}
-                  error={formik.touched.email}
-                  hint={formik.touched.email && formik.errors.email}
-                  className="pl-10 border-gray-300 focus:border-orange-400 focus:ring-orange-200 rounded-xl"
-                />
-              </div>
+              <Input
+                type="email"
+                id="email"
+                name="email"
+                label={getText("email")}
+                placeholder={getText("emailPlaceholder")}
+                value={formik.values.email}
+                onChange={formik.handleChange}
+                error={formik.touched.email && formik.errors.email}
+                hint={formik.touched.email && formik.errors.email}
+                leftIcon={Mail}
+                required
+              />
 
               {/* Phone */}
-              <div className="relative">
-                <Phone className="absolute left-3 top-[calc(1.875rem+1.375rem)] h-5 w-5 text-orange-500 z-10" />
-                <Input
-                  type="phone"
-                  id="phone"
-                  name="phone"
-                  label={getText("Phone")}
-                  placeholder="+54 9 11 1234-5678"
-                  onChange={formik.handleChange}
-                  error={formik.touched.phone}
-                  hint={formik.touched.phone && formik.errors.phone}
-                  className="pl-10 border-gray-300 focus:border-orange-400 focus:ring-orange-200 rounded-xl"
-                />
-              </div>
+              <Input
+                type="tel"
+                id="phone"
+                name="phone"
+                label={getText("Phone")}
+                placeholder="+54 9 11 1234-5678"
+                value={formik.values.phone}
+                onChange={formik.handleChange}
+                error={formik.touched.phone && formik.errors.phone}
+                hint={formik.touched.phone && formik.errors.phone}
+                leftIcon={Phone}
+                required
+              />
 
               {/* Role */}
-              <div className="relative">
-                <UserCheck className="absolute left-3 top-[calc(1.875rem+1.375rem)] h-5 w-5 text-orange-500 z-20" />
-                <CustomSelect
-                  id="role"
-                  name="role"
-                  label={getText("whoYouAre")}
-                  placeholder="Selecciona tu tipo de cuenta"
-                  options={options}
-                  className="pl-10 border-gray-300 focus:border-orange-400 focus:ring-orange-200 rounded-xl"
-                  value={
-                    options.find((op) => op.value === formik.values.role) ?? null
-                  }
-                  onChange={(option) => {
-                    formik.setFieldValue("role", option?.value ?? "");
-                    formik.setFieldTouched("role", true);
-                  }}
-                  error={formik.touched.role}
-                  hint={formik.touched.role && formik.errors.role}
-                />
-              </div>
+              <CustomSelect
+                id="role"
+                name="role"
+                label={getText("whoYouAre")}
+                placeholder="Selecciona tu tipo de cuenta"
+                options={options}
+                leftIcon={UserCheck}
+                value={
+                  options.find((op) => op.value === formik.values.role) ?? null
+                }
+                onChange={(option) => {
+                  formik.setFieldValue("role", option?.value ?? "");
+                  formik.setFieldTouched("role", true);
+                }}
+                error={formik.touched.role && formik.errors.role}
+                hint={formik.touched.role && formik.errors.role}
+              />
 
               {/* Passwords */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="relative">
-                  <Lock className="absolute left-3 top-[calc(1.875rem+1.375rem)] h-5 w-5 text-orange-500 z-10" />
-                  <Input
-                    name="password"
-                    label={getText("password")}
-                    placeholder={getText("passwordPlaceholder")}
-                    type={showPassword ? "text" : "password"}
-                    onChange={formik.handleChange}
-                    error={formik.touched.password}
-                    hint={formik.touched.password && formik.errors.password}
-                    className="pl-10 pr-10 border-gray-300 focus:border-orange-400 focus:ring-orange-200 rounded-xl"
-                  />
-                  <span
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute z-30 right-3 top-[calc(1.875rem+1.375rem)] cursor-pointer text-gray-500 hover:text-orange-500 transition-colors"
-                  >
-                    {showPassword ? (
-                      <EyeIcon className="h-5 w-5" />
-                    ) : (
-                      <EyeCloseIcon className="h-5 w-5" />
-                    )}
-                  </span>
-                </div>
+                <Input
+                  id="password"
+                  name="password"
+                  label={getText("password")}
+                  placeholder={getText("passwordPlaceholder")}
+                  type={showPassword ? "text" : "password"}
+                  value={formik.values.password}
+                  onChange={formik.handleChange}
+                  error={formik.touched.password && formik.errors.password}
+                  hint={formik.touched.password && formik.errors.password}
+                  leftIcon={Lock}
+                  rightIcon={showPassword ? EyeIcon : EyeCloseIcon}
+                  onRightIconClick={() => setShowPassword(!showPassword)}
+                  required
+                />
 
-                <div className="relative">
-                  <Lock className="absolute left-3 top-[calc(1.875rem+1.375rem)] h-5 w-5 text-orange-500 z-10" />
-                  <Input
-                    name="confirmPassword"
-                    label={getText("confirmPassword")}
-                    placeholder={getText("confirmPasswordPlaceholder")}
-                    type={showPassword ? "text" : "password"}
-                    onChange={formik.handleChange}
-                    error={formik.touched.confirmPassword}
-                    hint={formik.touched.confirmPassword && formik.errors.confirmPassword}
-                    className="pl-10 border-gray-300 focus:border-orange-400 focus:ring-orange-200 rounded-xl"
-                  />
-                </div>
+                <Input
+                  id="confirmPassword"
+                  name="confirmPassword"
+                  label={getText("confirmPassword")}
+                  placeholder={getText("confirmPasswordPlaceholder")}
+                  type={showPassword ? "text" : "password"}
+                  value={formik.values.confirmPassword}
+                  onChange={formik.handleChange}
+                  error={formik.touched.confirmPassword && formik.errors.confirmPassword}
+                  hint={formik.touched.confirmPassword && formik.errors.confirmPassword}
+                  leftIcon={Lock}
+                  required
+                />
               </div>
 
               {/* Terms Checkbox */}

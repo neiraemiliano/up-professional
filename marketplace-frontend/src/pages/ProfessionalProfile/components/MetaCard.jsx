@@ -2,7 +2,7 @@ import { useModal } from "../../../hooks/useModal";
 import { Modal } from "../../../components/template/ui/modal";
 import Button from "../../../components/template/ui/button/Button";
 import Label from "../../../components/template/form/Label";
-import Input from "../../../components/template/form/input/InputField";
+import { InputField as Input } from "../../../components/base";
 import { Mail, MapPin, Phone, Star } from "lucide-react";
 
 export default function MetaCard({

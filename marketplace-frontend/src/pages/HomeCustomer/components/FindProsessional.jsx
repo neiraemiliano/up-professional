@@ -31,7 +31,7 @@ import {
 } from "../../../config/forms/searchProfessional";
 import { getText } from "../../../config/texts/texts";
 import { useCategories } from "../../../hooks/api/categories";
-import { useContent } from "../../../context/ContentContext";
+import { useFeatureFlags } from "../../../context/FeatureFlagsContext";
 import { useLocations } from "../../../hooks/api/locations";
 import useGeolocation from "../../../hooks/useGeolocation";
 
@@ -43,7 +43,7 @@ const FindProsessional = () => {
 
   const { data: categories = [] } = useCategories();
   const { data: locations = [] } = useLocations();
-  const { getContent, isFeatureEnabled } = useContent();
+  const { isFeatureEnabled } = useFeatureFlags();
   const {
     location,
     loading: geoLoading,
@@ -157,7 +157,7 @@ const FindProsessional = () => {
             }`}
           >
             <span className="bg-gradient-to-r from-gray-900 via-orange-800 to-red-900 bg-clip-text text-transparent">
-              {getContent("hero_title", "Encontrá al profesional perfecto")}
+              Encontrá al profesional perfecto
             </span>
           </h1>
 
@@ -169,10 +169,7 @@ const FindProsessional = () => {
                 : "translate-y-8 opacity-0"
             }`}
           >
-            {getContent(
-              "hero_subtitle",
-              "Conectamos hogares con profesionales verificados y confiables"
-            )}
+            Conectamos hogares con profesionales verificados y confiables
           </p>
 
           {/* Indicadores de confianza premium */}
@@ -450,10 +447,7 @@ const FindProsessional = () => {
                         </div>
                         <span className="text-sm text-orange-700 font-bold bg-white/95 backdrop-blur-sm px-4 py-2 rounded-full shadow-lg border border-orange-200 flex items-center gap-2">
                           <Sparkles className="w-4 h-4" />
-                          {getContent(
-                            "voice_input_hint",
-                            "Habla para describir tu problema"
-                          )}
+                          Habla para describir tu problema
                         </span>
                       </div>
                     )}
@@ -537,7 +531,7 @@ const FindProsessional = () => {
                 {/* Efecto de brillo */}
                 <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
                 <span className="relative z-10">
-                  🔥 {getContent("hero_cta_button", "Buscar Profesionales")}
+                  🔥 Buscar Profesionales
                 </span>
                 <ArrowRight className="w-7 h-7 relative z-10" />
               </Button>

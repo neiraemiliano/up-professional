@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router";
 import { ChevronLeftIcon, EyeCloseIcon, EyeIcon } from "../../icons";
-import Input from "../template/form/input/InputField";
+import { InputField as Input } from "../base";
 import { getText } from "../../config/texts/texts";
 import { useFormik } from "formik";
 import { initialValues } from "../../config/forms/signUpForm";

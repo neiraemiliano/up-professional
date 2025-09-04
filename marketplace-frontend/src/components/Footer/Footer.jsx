@@ -19,10 +19,7 @@ import {
   Building,
   Smartphone,
 } from "lucide-react";
-import { useContent } from "../../hooks/api/content";
-
 const Footer = () => {
-  const { getContent } = useContent();
   
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -74,9 +71,9 @@ const Footer = () => {
   ];
 
   const socialLinks = [
-    { name: "Facebook", href: getContent('social_facebook', 'https://facebook.com/homefixed'), icon: Facebook },
-    { name: "Instagram", href: getContent('social_instagram', 'https://instagram.com/homefixed'), icon: Instagram },
-    { name: "Twitter", href: getContent('social_twitter', 'https://twitter.com/homefixed'), icon: Twitter },
+    { name: "Facebook", href: 'https://facebook.com/homefixed', icon: Facebook },
+    { name: "Instagram", href: 'https://instagram.com/homefixed', icon: Instagram },
+    { name: "Twitter", href: 'https://twitter.com/homefixed', icon: Twitter },
   ];
 
   const legalLinks = [
@@ -113,7 +110,7 @@ const Footer = () => {
               </div>
             </div>
             <p className="text-gray-300 leading-relaxed mb-6">
-              {getContent('footer_company_description', 'La plataforma más confiable para encontrar profesionales del hogar en Argentina.')}
+              La plataforma más confiable para encontrar profesionales del hogar en Argentina.
             </p>
             
             {/* Estadísticas destacadas */}
@@ -170,7 +167,7 @@ const Footer = () => {
                     </div>
                     <div>
                       <p className="text-white font-semibold">Atención al Cliente</p>
-                      <p className="text-gray-300 text-sm">{getContent('contact_phone', '+54 11 1234-5678')}</p>
+                      <p className="text-gray-300 text-sm">+54 11 1234-5678</p>
                     </div>
                   </div>
                   
@@ -180,7 +177,7 @@ const Footer = () => {
                     </div>
                     <div>
                       <p className="text-white font-semibold">Email de Soporte</p>
-                      <p className="text-gray-300 text-sm">{getContent('contact_email', 'contacto@homefixed.com')}</p>
+                      <p className="text-gray-300 text-sm">contacto@homefixed.com</p>
                     </div>
                   </div>
                 </div>
@@ -203,7 +200,7 @@ const Footer = () => {
                     </div>
                     <div>
                       <p className="text-white font-semibold">WhatsApp</p>
-                      <p className="text-gray-300 text-sm">{getContent('whatsapp_number', '+5491123456789')}</p>
+                      <p className="text-gray-300 text-sm">+5491123456789</p>
                     </div>
                   </div>
                 </div>
@@ -275,7 +272,7 @@ const Footer = () => {
           {/* Copyright y enlaces legales */}
           <div className="text-center md:text-left">
             <p className="text-gray-400 mb-2">
-              {getContent('footer_copyright', `© ${currentYear} Home Fixed. Todos los derechos reservados.`)}
+              © {currentYear} Home Fixed. Todos los derechos reservados.
             </p>
             <div className="flex flex-wrap justify-center md:justify-start gap-4">
               {legalLinks.map((link, index) => (

@@ -42,7 +42,7 @@ export const useEnabledFeatureFlags = () => {
 export const useEnabledFeaturesMap = () => {
   return useQuery({
     queryKey: QUERY_KEYS.ENABLED_MAP,
-    queryFn: () => featureFlagsAPI.getEnabledMap().then(res => res.data.data),
+    queryFn: featureFlagsAPI.getEnabledMap,
     staleTime: 5 * 60 * 1000, // 5 minutes
     cacheTime: 10 * 60 * 1000, // 10 minutes
   });

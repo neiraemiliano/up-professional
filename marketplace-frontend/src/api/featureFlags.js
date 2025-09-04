@@ -19,7 +19,7 @@ export const featureFlagsAPI = {
   getAll: () => api.get('/feature-flags').then(r => r.data.data),
   
   // Get feature flags grouped by category (admin only)
-  getGrouped: () => api.get('/feature-flags/grouped').then(r => r.data.data),
+  getGrouped: () => api.get('/feature-flags/grouped'),
   
   // Get feature flags by category (admin only)
   getByCategory: (category) => api.get(`/feature-flags/category/${category}`).then(r => r.data.data),

@@ -9,12 +9,12 @@ import DatePicker from "../date-picker";
 export default function DefaultInputs() {
   const [showPassword, setShowPassword] = useState(false);
   const options = [
-    { value: "marketing", label: "Marketing" },
-    { value: "template", label: "Template" },
-    { value: "development", label: "Development" },
+    { value: "marketing", name: "Marketing" },
+    { value: "template", name: "Template" },
+    { value: "development", name: "Development" },
   ];
-  const handleSelectChange = (value: string) => {
-    console.log("Selected value:", value);
+  const handleSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    console.log("Selected value:", e.target.value);
   };
 
   return (

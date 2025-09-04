@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import contentAPI from '../../api/content';
 
 // Hook para obtener contenido público
@@ -76,30 +77,19 @@ export const useContentByCategory = (category) => {
   return { content, loading, error };
 };
 
-// Hook para anuncios
+// Hook para anuncios usando React Query
 export const useAnnouncements = (params = {}) => {
-  const [announcements, setAnnouncements] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-
-  const fetchAnnouncements = useCallback(async () => {
-    try {
-      setLoading(true);
-      const response = await contentAPI.getActiveAnnouncements(params);
-      if (response.success) {
-        setAnnouncements(response.data);
-      }
-    } catch (err) {
-      setError(err);
-      console.error('Error fetching announcements:', err);
-    } finally {
-      setLoading(false);
-    }
-  }, [JSON.stringify(params)]);
-
-  useEffect(() => {
-    fetchAnnouncements();
-  }, [fetchAnnouncements]);
+  const { 
+    data: announcements = [], 
+    isLoading: loading, 
+    error, 
+    refetch 
+  } = useQuery({
+    queryKey: ['announcements', 'active', params],
+    queryFn: () => contentAPI.getActiveAnnouncements(params).then(res => res.data),
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    cacheTime: 10 * 60 * 1000, // 10 minutes
+  });
 
   const trackClick = useCallback(async (id) => {
     try {
@@ -114,7 +104,7 @@ export const useAnnouncements = (params = {}) => {
     loading,
     error,
     trackClick,
-    refetch: fetchAnnouncements
+    refetch
   };
 };
 

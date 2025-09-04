@@ -27,7 +27,9 @@ const MetricsChart = ({
   yKey = 'value', 
   dataKey = 'value', 
   nameKey = 'name',
-  height = 300 
+  height = 300,
+  multipleLines = false,
+  lineKeys = []
 }) => {
   // Ensure data is an array
   let chartData = data;
@@ -94,14 +96,30 @@ const MetricsChart = ({
                 boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
               }}
             />
-            <Line 
-              type="monotone" 
-              dataKey={yKey} 
-              stroke="#3B82F6" 
-              strokeWidth={2}
-              dot={{ fill: '#3B82F6', strokeWidth: 2, r: 4 }}
-              activeDot={{ r: 6, fill: '#1D4ED8' }}
-            />
+            <Legend />
+            {multipleLines && lineKeys.length > 0 ? (
+              lineKeys.map((key, index) => (
+                <Line 
+                  key={key}
+                  type="monotone" 
+                  dataKey={key} 
+                  stroke={COLORS[index % COLORS.length]} 
+                  strokeWidth={2}
+                  dot={{ fill: COLORS[index % COLORS.length], strokeWidth: 2, r: 4 }}
+                  activeDot={{ r: 6, fill: COLORS[index % COLORS.length] }}
+                  name={key.charAt(0).toUpperCase() + key.slice(1)}
+                />
+              ))
+            ) : (
+              <Line 
+                type="monotone" 
+                dataKey={yKey} 
+                stroke="#3B82F6" 
+                strokeWidth={2}
+                dot={{ fill: '#3B82F6', strokeWidth: 2, r: 4 }}
+                activeDot={{ r: 6, fill: '#1D4ED8' }}
+              />
+            )}
           </LineChart>
         </ResponsiveContainer>
       );

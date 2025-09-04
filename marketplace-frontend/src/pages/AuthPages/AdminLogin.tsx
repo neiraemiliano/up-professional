@@ -12,7 +12,7 @@ import {
   BarChart3,
   Users
 } from "lucide-react";
-import Input from "../../components/template/form/input/InputField";
+// import { InputField as Input } from "../../components/base";
 import { useFormik } from "formik";
 import { AuthContext } from "../../context/AuthContext";
 import Button from "../../components/template/ui/button/Button";
@@ -44,7 +44,8 @@ export default function AdminLogin() {
         await authContext.login(values);
         
         // Obtener el usuario del contexto
-        const user = JSON.parse(localStorage.getItem("user"));
+        const userStr = localStorage.getItem("user");
+        const user = userStr ? JSON.parse(userStr) : null;
         
         // Verificar que sea admin
         if (user?.role !== 'admin') {
@@ -59,7 +60,7 @@ export default function AdminLogin() {
         navigate('/admin', { replace: true });
       } catch (error) {
         console.error("Admin login error:", error);
-        const errorMessage = error?.message || "Error de autenticación";
+        const errorMessage = (error as any)?.message || "Error de autenticación";
         setErrors({ password: errorMessage });
       } finally {
         setSubmitting(false);

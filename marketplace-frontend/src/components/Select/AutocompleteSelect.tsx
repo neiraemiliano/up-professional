@@ -66,24 +66,23 @@ export default function AutocompleteSelect({
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [query, onChange, options]);
 
-  /* ————— clases dinámicas ————— */
-  let inputClasses = `h-11 w-full rounded-lg border px-4 py-2.5 text-sm shadow-theme-xs placeholder:text-gray-400 focus:outline-hidden focus:ring-3
-     dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 ${className}`;
+  /* ————— clases dinámicas con estilo premium ————— */
+  let inputClasses = `h-12 w-full rounded-xl border-2 px-4 py-3 text-sm font-medium shadow-lg transition-all duration-300 placeholder:text-gray-500 focus:outline-none focus:ring-4 backdrop-blur-sm ${className}`;
 
   if (error) {
     inputClasses +=
-      " border-error-500 focus:border-error-300 focus:ring-error-500/20 dark:text-error-400";
+      " border-red-300 bg-red-50/50 focus:border-red-400 focus:ring-red-200/50 text-red-800 placeholder:text-red-400";
   } else if (success) {
     inputClasses +=
-      " border-success-500 focus:border-success-300 focus:ring-success-500/20 dark:text-success-400";
+      " border-green-300 bg-green-50/50 focus:border-green-400 focus:ring-green-200/50 text-green-800 placeholder:text-green-400";
   } else {
     inputClasses +=
-      " bg-transparent text-gray-800 border-gray-300 focus:border-brand-300 focus:ring-brand-500/20 dark:border-gray-700";
+      " border-orange-200/50 bg-white/90 text-gray-800 focus:border-orange-400 focus:ring-orange-200/50 hover:border-orange-300 hover:shadow-xl";
   }
 
-  /* ——— padding extra si hay íconos ——— */
-  if (LeftIcon) inputClasses += " pl-10";
-  if (query) inputClasses += " pr-10";
+  /* ——— padding extra si hay íconos con mejor espaciado ——— */
+  if (LeftIcon) inputClasses += " pl-12";
+  if (query) inputClasses += " pr-12";
 
   /* -------------------------------------------------- */
   const clearQuery = () => {
@@ -130,8 +129,8 @@ export default function AutocompleteSelect({
         {/* Ícono a la izquierda */}
         {LeftIcon && (
           <LeftIcon
-            size={16}
-            className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"
+            size={18}
+            className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none z-10"
           />
         )}
 
@@ -152,33 +151,35 @@ export default function AutocompleteSelect({
           onKeyDown={handleKeyDown}
         />
 
-        {/* Botón “borrar” */}
+        {/* Botón "borrar" */}
         {query && (
           <button
             type="button"
             onClick={clearQuery}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 transition-colors duration-200 z-10"
             aria-label={"clear"}
           >
-            <X size={16} />
+            <X size={18} />
           </button>
         )}
       </div>
 
       {/* LISTA DESPLEGABLE */}
       {open && filtered.length > 0 && (
-        <ul className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-sm border border-gray-200 bg-white shadow-lg dark:bg-gray-800">
+        <ul className="absolute z-50 mt-2 max-h-64 w-full overflow-auto rounded-xl border-2 border-orange-200/50 bg-white/95 shadow-2xl backdrop-blur-lg dark:bg-gray-900/95 dark:border-gray-700">
           {filtered.map((option, idx) => (
             <li
               key={option.value}
-              className={`cursor-pointer px-4 py-2 text-sm border-b border-gray-200 ${
+              className={`cursor-pointer px-4 py-3 text-sm font-medium transition-all duration-200 ${
                 idx === highlight
-                  ? "bg-brand-50 dark:bg-brand-700/40"
-                  : "hover:bg-gray-100 dark:hover:bg-gray-700/40"
+                  ? "bg-orange-100/60 text-orange-800 dark:bg-orange-900/30 dark:text-orange-200"
+                  : "hover:bg-gray-50/80 text-gray-800 dark:text-gray-200 dark:hover:bg-gray-800/50"
+              } ${
+                idx === filtered.length - 1 ? "" : "border-b border-orange-100/50 dark:border-gray-700/50"
               }`}
               onMouseEnter={() => setHighlight(idx)}
               onMouseDown={(e) => {
-                e.preventDefault(); // Evita perder el foco
+                e.preventDefault();
                 handleSelect(option);
               }}
             >

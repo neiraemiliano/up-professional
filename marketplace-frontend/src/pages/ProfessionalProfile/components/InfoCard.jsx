@@ -14,7 +14,7 @@ import {
   ExternalLink
 } from "lucide-react";
 import { useState } from "react";
-import Input from "../../../components/template/form/input/InputField";
+import { InputField as Input } from "../../../components/base";
 import Label from "../../../components/template/form/Label";
 import Button from "../../../components/template/ui/button/Button";
 import { Modal } from "../../../components/template/ui/modal";

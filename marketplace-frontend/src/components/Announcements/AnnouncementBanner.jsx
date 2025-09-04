@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { X, ExternalLink, Info, AlertTriangle, CheckCircle, XCircle, Megaphone } from 'lucide-react';
-import { useContent } from '../../context/ContentContext';
+import { useAnnouncementsContext } from '../../context/AnnouncementsContext';
 
 const AnnouncementBanner = ({ page = 'home', userType = 'all' }) => {
   const [dismissedAnnouncements, setDismissedAnnouncements] = useState(() => {
@@ -9,7 +9,7 @@ const AnnouncementBanner = ({ page = 'home', userType = 'all' }) => {
     return dismissed ? JSON.parse(dismissed) : [];
   });
 
-  const { getAnnouncementsForPage, trackAnnouncementClick, loading } = useContent();
+  const { getAnnouncementsForPage, trackAnnouncementClick, loading } = useAnnouncementsContext();
   
   // Get announcements for the specific page
   const allAnnouncements = getAnnouncementsForPage(page);
