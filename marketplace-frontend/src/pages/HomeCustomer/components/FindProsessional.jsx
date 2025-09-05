@@ -136,7 +136,7 @@ const FindProsessional = () => {
         {/* Hero Section Premium */}
         <div className="text-center mb-16">
           {/* Badge superior */}
-          <div
+          {/* <div
             className={`inline-flex items-center gap-2 bg-gradient-to-r from-orange-100 to-red-100 text-orange-700 px-6 py-3 rounded-full text-sm font-bold mb-8 border border-orange-200 shadow-lg transform transition-all duration-700 ${
               isVisible
                 ? "translate-y-0 opacity-100 scale-100"
@@ -146,7 +146,7 @@ const FindProsessional = () => {
             <Sparkles className="w-5 h-5" />
             <span>{`Argentina's #1 Professional Marketplace`}</span>
             <div className="w-2 h-2 bg-orange-500 rounded-full animate-pulse"></div>
-          </div>
+          </div> */}
 
           {/* Título principal */}
           <h1
@@ -173,7 +173,7 @@ const FindProsessional = () => {
           </p>
 
           {/* Indicadores de confianza premium */}
-          <div
+          {/* <div
             className={`flex flex-wrap justify-center gap-4 sm:gap-6 mb-12 transform transition-all duration-700 delay-600 ${
               isVisible
                 ? "translate-y-0 opacity-100"
@@ -195,10 +195,10 @@ const FindProsessional = () => {
               <TrendingUp className="w-5 h-5" />
               <span>Ahorrá hasta 30%</span>
             </div>
-          </div>
+          </div> */}
 
           {/* Estadísticas destacadas */}
-          <div
+          {/* <div
             className={`grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 max-w-4xl mx-auto mb-16 transform transition-all duration-700 delay-800 ${
               isVisible
                 ? "translate-y-0 opacity-100"
@@ -230,7 +230,7 @@ const FindProsessional = () => {
               </div>
             </div>
           </div>
-        </div>
+        </div> */}
 
         {/* Formulario de búsqueda premium */}
         <div
