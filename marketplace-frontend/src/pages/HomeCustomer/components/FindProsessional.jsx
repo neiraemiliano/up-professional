@@ -157,7 +157,7 @@ const FindProsessional = () => {
             }`}
           >
             <span className="bg-gradient-to-r from-gray-900 via-orange-800 to-red-900 bg-clip-text text-transparent">
-              Encontrá al profesional perfect
+              Encontrá al profesional perfectasdaisds
             </span>
           </h1>
 
