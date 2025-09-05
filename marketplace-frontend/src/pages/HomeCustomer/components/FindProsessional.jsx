@@ -136,7 +136,7 @@ const FindProsessional = () => {
         {/* Hero Section Premium */}
         <div className="text-center mb-16">
           {/* Badge superior */}
-          {/* <div
+          <div
             className={`inline-flex items-center gap-2 bg-gradient-to-r from-orange-100 to-red-100 text-orange-700 px-6 py-3 rounded-full text-sm font-bold mb-8 border border-orange-200 shadow-lg transform transition-all duration-700 ${
               isVisible
                 ? "translate-y-0 opacity-100 scale-100"
@@ -146,7 +146,7 @@ const FindProsessional = () => {
             <Sparkles className="w-5 h-5" />
             <span>{`Argentina's #1 Professional Marketplace`}</span>
             <div className="w-2 h-2 bg-orange-500 rounded-full animate-pulse"></div>
-          </div> */}
+          </div>
 
           {/* Título principal */}
           <h1
@@ -157,7 +157,7 @@ const FindProsessional = () => {
             }`}
           >
             <span className="bg-gradient-to-r from-gray-900 via-orange-800 to-red-900 bg-clip-text text-transparent">
-              Encontrá al profesional perfectasdaisds
+              Encontrá al profesional perfecto
             </span>
           </h1>
 
@@ -229,8 +229,8 @@ const FindProsessional = () => {
                 Recomiendan
               </div>
             </div>
-          </div>
-        </div> */}
+          </div> */}
+        </div>
 
         {/* Formulario de búsqueda premium */}
         <div
@@ -530,7 +530,9 @@ const FindProsessional = () => {
               >
                 {/* Efecto de brillo */}
                 <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
-                <span className="relative z-10">🔥 Buscar Profesionales</span>
+                <span className="relative z-10">
+                  🔥 {getContent("hero_cta_button", "Buscar Profesionales")}
+                </span>
                 <ArrowRight className="w-7 h-7 relative z-10" />
               </Button>
 
