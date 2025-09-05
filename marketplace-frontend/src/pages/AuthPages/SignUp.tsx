@@ -1,6 +1,6 @@
 import AuthLayout from "./AuthPageLayout";
-import SignUpForm from "../../components/Auth/SignUpForm";
-import ProgressiveSignUpForm from "../../components/Auth/ProgressiveSignUpForm";
+import SignUpForm from "../../components/Auth/SignUpForm.jsx";
+import ProgressiveSignUpForm from "../../components/Auth/ProgressiveSignUpForm.jsx";
 
 export default function SignUp() {
   // Cambiar a ProgressiveSignUpForm para mejor UX
