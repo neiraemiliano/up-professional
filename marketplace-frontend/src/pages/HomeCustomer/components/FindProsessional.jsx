@@ -157,7 +157,7 @@ const FindProsessional = () => {
             }`}
           >
             <span className="bg-gradient-to-r from-gray-900 via-orange-800 to-red-900 bg-clip-text text-transparent">
-              Encontrá al profesional perfecto
+              Encontrá al profesional perfect
             </span>
           </h1>
 
@@ -530,9 +530,7 @@ const FindProsessional = () => {
               >
                 {/* Efecto de brillo */}
                 <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
-                <span className="relative z-10">
-                  🔥 Buscar Profesionales
-                </span>
+                <span className="relative z-10">🔥 Buscar Profesionales</span>
                 <ArrowRight className="w-7 h-7 relative z-10" />
               </Button>
 
