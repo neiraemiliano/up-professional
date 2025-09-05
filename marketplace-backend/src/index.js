@@ -62,6 +62,16 @@ app.use("/api/payments", paymentRoutes);
 app.use("/api/feature-flags", featureFlagRoutes);
 app.use("/api", contentRoutes);
 
+app.get("/api/health", async (req, res) => {
+  try {
+    res
+      .status(200)
+      .json({ ok: true, service: "backend", time: new Date().toISOString() });
+  } catch (e) {
+    res.status(500).json({ ok: false, error: "health_failed" });
+  }
+});
+
 // Middleware para rutas no definidas
 app.use(notFound);
 
