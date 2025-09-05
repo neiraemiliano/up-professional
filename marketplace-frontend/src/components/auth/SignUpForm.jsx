@@ -1,38 +1,31 @@
-import { useState } from "react";
-import { Link, useNavigate } from "react-router";
-import { 
-  ChevronLeftIcon, 
-  EyeCloseIcon, 
-  EyeIcon 
-} from "../../icons";
-import { 
-  Building, 
-  Sparkles, 
-  Star, 
-  Users, 
-  Shield, 
-  CheckCircle, 
-  Award, 
-  TrendingUp, 
-  Heart,
+import { useFormik } from "formik";
+import {
   ArrowRight,
+  Building,
+  Clock,
+  Heart,
+  Lock,
+  Mail,
   MapPin,
   Phone,
-  Mail,
+  Shield,
+  Sparkles,
+  Star,
   User,
-  Lock,
   UserCheck,
+  Users,
   Zap,
-  Clock
 } from "lucide-react";
-import { InputField as Input } from "../base";
-import Checkbox from "../template/form/input/Checkbox";
-import { getText } from "../../config/texts/texts";
-import { useFormik } from "formik";
+import { useState } from "react";
+import { Link, useNavigate } from "react-router";
 import { initialValues, validationSchema } from "../../config/forms/signUpForm";
+import { getText } from "../../config/texts/texts";
 import useAuth from "../../hooks/context/useAuth";
-import Button from "../template/ui/button/Button";
+import { ChevronLeftIcon, EyeCloseIcon, EyeIcon } from "../../icons";
+import { InputField as Input } from "../base";
 import CustomSelect from "../Select/CustomSelect";
+import Checkbox from "../template/form/input/Checkbox";
+import Button from "../template/ui/button/Button";
 
 export default function SignUpForm() {
   const authContext = useAuth();
@@ -42,26 +35,32 @@ export default function SignUpForm() {
   const [isChecked, setIsChecked] = useState(false);
 
   const options = [
-    { value: "customer", name: "🏠 " + getText("client") + " (Busco profesionales)" },
-    { value: "professional", name: "🔧 " + getText("professional") + " (Ofrezco servicios)" },
+    {
+      value: "customer",
+      name: "🏠 " + getText("client") + " (Busco profesionales)",
+    },
+    {
+      value: "professional",
+      name: "🔧 " + getText("professional") + " (Ofrezco servicios)",
+    },
   ];
 
   const benefits = [
     {
       icon: Users,
       title: "Más de 15,000 usuarios",
-      description: "Conectate con la comunidad más grande de Argentina"
+      description: "Conectate con la comunidad más grande de Argentina",
     },
     {
       icon: Shield,
       title: "100% Verificado",
-      description: "Todos nuestros profesionales están verificados"
+      description: "Todos nuestros profesionales están verificados",
     },
     {
       icon: Zap,
       title: "Súper rápido",
-      description: "Respuestas en menos de 2 horas garantizadas"
-    }
+      description: "Respuestas en menos de 2 horas garantizadas",
+    },
   ];
 
   const testimonials = [
@@ -70,15 +69,15 @@ export default function SignUpForm() {
       location: "Palermo, CABA",
       text: "¡Increíble plataforma! Encontré al profesional perfecto.",
       rating: 5,
-      avatar: "👩‍💼"
+      avatar: "👩‍💼",
     },
     {
-      name: "Carlos M.", 
+      name: "Carlos M.",
       location: "Villa Crespo, CABA",
       text: "Como profesional, mis ingresos aumentaron un 180%.",
       rating: 5,
-      avatar: "👨‍🔧"
-    }
+      avatar: "👨‍🔧",
+    },
   ];
 
   const formik = useFormik({
@@ -88,21 +87,21 @@ export default function SignUpForm() {
       try {
         delete values.confirmPassword;
         await authContext.register(values);
-        
+
         // Check if professional needs onboarding
         const requiresOnboarding = localStorage.getItem("requiresOnboarding");
-        
-        if (values.role === 'professional') {
+
+        if (values.role === "professional") {
           if (requiresOnboarding) {
             localStorage.removeItem("requiresOnboarding");
-            navigate("/professional-onboarding", { 
-              state: { userData: authContext.user } 
+            navigate("/professional-onboarding", {
+              state: { userData: authContext.user },
             });
           } else {
             // Professional registered successfully, go to professional dashboard
             navigate("/professional-dashboard");
           }
-        } else if (values.role === 'customer') {
+        } else if (values.role === "customer") {
           navigate("/customer-dashboard");
         } else {
           navigate("/");
@@ -142,10 +141,12 @@ export default function SignUpForm() {
                 </div>
                 <div>
                   <h1 className="text-2xl font-bold">Home Fixed</h1>
-                  <p className="text-white/80 text-sm">Tu marketplace de confianza</p>
+                  <p className="text-white/80 text-sm">
+                    Tu marketplace de confianza
+                  </p>
                 </div>
               </div>
-              
+
               <h2 className="text-4xl font-bold mb-4 leading-tight">
                 <span className="bg-gradient-to-r from-orange-300 to-red-300 bg-clip-text text-transparent">
                   ¡Unite a la comunidad
@@ -153,9 +154,10 @@ export default function SignUpForm() {
                 <br />
                 más grande de Argentina
               </h2>
-              
+
               <p className="text-white/90 text-lg leading-relaxed">
-                Miles de profesionales y clientes ya confían en nosotros para conectar y hacer negocios.
+                Miles de profesionales y clientes ya confían en nosotros para
+                conectar y hacer negocios.
               </p>
             </div>
 
@@ -167,8 +169,12 @@ export default function SignUpForm() {
                     <benefit.icon className="w-6 h-6 text-orange-300" />
                   </div>
                   <div>
-                    <h3 className="font-bold text-white mb-1">{benefit.title}</h3>
-                    <p className="text-white/80 text-sm">{benefit.description}</p>
+                    <h3 className="font-bold text-white mb-1">
+                      {benefit.title}
+                    </h3>
+                    <p className="text-white/80 text-sm">
+                      {benefit.description}
+                    </p>
                   </div>
                 </div>
               ))}
@@ -176,15 +182,22 @@ export default function SignUpForm() {
 
             {/* Testimonials */}
             <div className="space-y-4">
-              <h3 className="text-lg font-bold text-orange-300 mb-4">Lo que dicen nuestros usuarios:</h3>
+              <h3 className="text-lg font-bold text-orange-300 mb-4">
+                Lo que dicen nuestros usuarios:
+              </h3>
               {testimonials.map((testimonial, index) => (
-                <div key={index} className="bg-white/10 backdrop-blur-sm rounded-2xl p-4 border border-white/20">
+                <div
+                  key={index}
+                  className="bg-white/10 backdrop-blur-sm rounded-2xl p-4 border border-white/20"
+                >
                   <div className="flex items-center gap-3 mb-3">
                     <div className="w-10 h-10 bg-gradient-to-br from-orange-400 to-red-500 rounded-full flex items-center justify-center text-lg">
                       {testimonial.avatar}
                     </div>
                     <div>
-                      <h4 className="font-semibold text-white text-sm">{testimonial.name}</h4>
+                      <h4 className="font-semibold text-white text-sm">
+                        {testimonial.name}
+                      </h4>
                       <p className="text-white/70 text-xs flex items-center gap-1">
                         <MapPin className="w-3 h-3" />
                         {testimonial.location}
@@ -192,11 +205,16 @@ export default function SignUpForm() {
                     </div>
                     <div className="ml-auto flex">
                       {[...Array(testimonial.rating)].map((_, i) => (
-                        <Star key={i} className="w-4 h-4 text-yellow-400 fill-current" />
+                        <Star
+                          key={i}
+                          className="w-4 h-4 text-yellow-400 fill-current"
+                        />
                       ))}
                     </div>
                   </div>
-                  <p className="text-white/90 text-sm italic">"{testimonial.text}"</p>
+                  <p className="text-white/90 text-sm italic">
+                    "{testimonial.text}"
+                  </p>
                 </div>
               ))}
             </div>
@@ -245,23 +263,42 @@ export default function SignUpForm() {
                 <Sparkles className="w-4 h-4" />
                 <span>¡Registro 100% gratis!</span>
               </div>
-              
+
               <h2 className="text-3xl lg:text-4xl font-extrabold text-gray-800 mb-3">
                 Creá tu cuenta
               </h2>
               <p className="text-gray-600 text-lg">
-                Empezá a conectar con profesionales o clientes en menos de 2 minutos
+                Empezá a conectar con profesionales o clientes en menos de 2
+                minutos
               </p>
             </div>
 
             {/* Google Button */}
             <div className="mb-6">
               <button className="w-full inline-flex items-center justify-center gap-3 py-4 px-6 text-sm font-semibold text-gray-700 transition-all bg-white rounded-xl border-2 border-gray-200 hover:border-orange-300 hover:bg-orange-50 shadow-lg hover:shadow-xl transform hover:scale-[1.02]">
-                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M18.7511 10.1944C18.7511 9.47495 18.6915 8.94995 18.5626 8.40552H10.1797V11.6527H15.1003C15.0011 12.4597 14.4654 13.675 13.2749 14.4916L13.2582 14.6003L15.9087 16.6126L16.0924 16.6305C17.7788 15.1041 18.7511 12.8583 18.7511 10.1944Z" fill="#4285F4"/>
-                  <path d="M10.1788 18.75C12.5895 18.75 14.6133 17.9722 16.0915 16.6305L13.274 14.4916C12.5201 15.0068 11.5081 15.3666 10.1788 15.3666C7.81773 15.3666 5.81379 13.8402 5.09944 11.7305L4.99473 11.7392L2.23868 13.8295L2.20264 13.9277C3.67087 16.786 6.68674 18.75 10.1788 18.75Z" fill="#34A853"/>
-                  <path d="M5.10014 11.7305C4.91165 11.186 4.80257 10.6027 4.80257 9.99992C4.80257 9.3971 4.91165 8.81379 5.09022 8.26935L5.08523 8.1534L2.29464 6.02954L2.20333 6.0721C1.5982 7.25823 1.25098 8.5902 1.25098 9.99992C1.25098 11.4096 1.5982 12.7415 2.20333 13.9277L5.10014 11.7305Z" fill="#FBBC05"/>
-                  <path d="M10.1789 4.63331C11.8554 4.63331 12.9864 5.34303 13.6312 5.93612L16.1511 3.525C14.6035 2.11528 12.5895 1.25 10.1789 1.25C6.68676 1.25 3.67088 3.21387 2.20264 6.07218L5.08953 8.26943C5.81381 6.15972 7.81776 4.63331 10.1789 4.63331Z" fill="#EB4335"/>
+                <svg
+                  width="20"
+                  height="20"
+                  viewBox="0 0 20 20"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M18.7511 10.1944C18.7511 9.47495 18.6915 8.94995 18.5626 8.40552H10.1797V11.6527H15.1003C15.0011 12.4597 14.4654 13.675 13.2749 14.4916L13.2582 14.6003L15.9087 16.6126L16.0924 16.6305C17.7788 15.1041 18.7511 12.8583 18.7511 10.1944Z"
+                    fill="#4285F4"
+                  />
+                  <path
+                    d="M10.1788 18.75C12.5895 18.75 14.6133 17.9722 16.0915 16.6305L13.274 14.4916C12.5201 15.0068 11.5081 15.3666 10.1788 15.3666C7.81773 15.3666 5.81379 13.8402 5.09944 11.7305L4.99473 11.7392L2.23868 13.8295L2.20264 13.9277C3.67087 16.786 6.68674 18.75 10.1788 18.75Z"
+                    fill="#34A853"
+                  />
+                  <path
+                    d="M5.10014 11.7305C4.91165 11.186 4.80257 10.6027 4.80257 9.99992C4.80257 9.3971 4.91165 8.81379 5.09022 8.26935L5.08523 8.1534L2.29464 6.02954L2.20333 6.0721C1.5982 7.25823 1.25098 8.5902 1.25098 9.99992C1.25098 11.4096 1.5982 12.7415 2.20333 13.9277L5.10014 11.7305Z"
+                    fill="#FBBC05"
+                  />
+                  <path
+                    d="M10.1789 4.63331C11.8554 4.63331 12.9864 5.34303 13.6312 5.93612L16.1511 3.525C14.6035 2.11528 12.5895 1.25 10.1789 1.25C6.68676 1.25 3.67088 3.21387 2.20264 6.07218L5.08953 8.26943C5.81381 6.15972 7.81776 4.63331 10.1789 4.63331Z"
+                    fill="#EB4335"
+                  />
                 </svg>
                 {getText("signInWithGoogle")}
               </button>
@@ -386,8 +423,14 @@ export default function SignUpForm() {
                   type={showPassword ? "text" : "password"}
                   value={formik.values.confirmPassword}
                   onChange={formik.handleChange}
-                  error={formik.touched.confirmPassword && formik.errors.confirmPassword}
-                  hint={formik.touched.confirmPassword && formik.errors.confirmPassword}
+                  error={
+                    formik.touched.confirmPassword &&
+                    formik.errors.confirmPassword
+                  }
+                  hint={
+                    formik.touched.confirmPassword &&
+                    formik.errors.confirmPassword
+                  }
                   leftIcon={Lock}
                   required
                 />
@@ -402,11 +445,17 @@ export default function SignUpForm() {
                 />
                 <p className="text-sm text-gray-600 leading-relaxed">
                   Al crear una cuenta aceptás nuestros{" "}
-                  <Link to="/terms" className="text-orange-600 hover:text-orange-700 font-semibold hover:underline">
+                  <Link
+                    to="/terms"
+                    className="text-orange-600 hover:text-orange-700 font-semibold hover:underline"
+                  >
                     Términos y Condiciones
                   </Link>{" "}
                   y nuestra{" "}
-                  <Link to="/privacy" className="text-orange-600 hover:text-orange-700 font-semibold hover:underline">
+                  <Link
+                    to="/privacy"
+                    className="text-orange-600 hover:text-orange-700 font-semibold hover:underline"
+                  >
                     Política de Privacidad
                   </Link>
                 </p>
@@ -420,7 +469,7 @@ export default function SignUpForm() {
               >
                 {/* Shine effect */}
                 <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
-                
+
                 <span className="relative z-10 flex items-center justify-center gap-3">
                   {formik.isSubmitting ? (
                     <>
