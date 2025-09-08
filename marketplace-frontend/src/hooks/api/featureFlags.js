@@ -24,7 +24,7 @@ export const useFeatureFlags = () => {
 export const useFeatureFlagsGrouped = () => {
   return useQuery({
     queryKey: QUERY_KEYS.FEATURE_FLAGS_GROUPED,
-    queryFn: () => featureFlagsAPI.getGrouped().then(res => res.data.data),
+    queryFn: featureFlagsAPI.getGrouped,
   });
 };
 
@@ -32,7 +32,7 @@ export const useFeatureFlagsGrouped = () => {
 export const useEnabledFeatureFlags = () => {
   return useQuery({
     queryKey: QUERY_KEYS.ENABLED_FLAGS,
-    queryFn: () => featureFlagsAPI.getEnabled().then(res => res.data.data),
+    queryFn: featureFlagsAPI.getEnabled,
     staleTime: 5 * 60 * 1000, // 5 minutes
     cacheTime: 10 * 60 * 1000, // 10 minutes
   });
@@ -52,7 +52,7 @@ export const useEnabledFeaturesMap = () => {
 export const useFeatureFlag = (id) => {
   return useQuery({
     queryKey: QUERY_KEYS.FEATURE_FLAG(id),
-    queryFn: () => featureFlagsAPI.getById(id).then(res => res.data.data),
+    queryFn: () => featureFlagsAPI.getById(id),
     enabled: Boolean(id),
   });
 };
@@ -61,7 +61,7 @@ export const useFeatureFlag = (id) => {
 export const useIsFeatureEnabled = (flagId) => {
   return useQuery({
     queryKey: ['featureEnabled', flagId],
-    queryFn: () => featureFlagsAPI.checkEnabled(flagId).then(res => res.data.data.isEnabled),
+    queryFn: () => featureFlagsAPI.checkEnabled(flagId).then(res => res.isEnabled),
     enabled: Boolean(flagId),
     staleTime: 5 * 60 * 1000, // 5 minutes
   });
@@ -72,7 +72,7 @@ export const useToggleFeatureFlag = () => {
   const queryClient = useQueryClient();
   
   return useMutation({
-    mutationFn: (id) => featureFlagsAPI.toggle(id).then(res => res.data.data),
+    mutationFn: (id) => featureFlagsAPI.toggle(id),
     onSuccess: () => {
       // Invalidate and refetch all feature flag queries
       queryClient.invalidateQueries({ queryKey: ['featureFlags'] });
@@ -86,7 +86,7 @@ export const useUpdateFeatureFlag = () => {
   const queryClient = useQueryClient();
   
   return useMutation({
-    mutationFn: ({ id, data }) => featureFlagsAPI.update(id, data).then(res => res.data.data),
+    mutationFn: ({ id, data }) => featureFlagsAPI.update(id, data),
     onSuccess: (data, variables) => {
       // Update specific feature flag in cache
       queryClient.setQueryData(QUERY_KEYS.FEATURE_FLAG(variables.id), data);
@@ -104,7 +104,7 @@ export const useCreateFeatureFlag = () => {
   const queryClient = useQueryClient();
   
   return useMutation({
-    mutationFn: (data) => featureFlagsAPI.create(data).then(res => res.data.data),
+    mutationFn: (data) => featureFlagsAPI.create(data),
     onSuccess: () => {
       // Invalidate all feature flag queries to refetch
       queryClient.invalidateQueries({ queryKey: ['featureFlags'] });

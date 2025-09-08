@@ -1,0 +1,69 @@
+# Home Fixed - Robots.txt
+# Marketplace de profesionales para el hogar en Argentina
+
+User-agent: *
+Allow: /
+
+# Permitir páginas importantes para SEO
+Allow: /search
+Allow: /professional/
+Allow: /category/
+Allow: /about
+Allow: /contact
+Allow: /faq
+Allow: /terms
+Allow: /privacy
+
+# Bloquear áreas privadas y administrativas
+Disallow: /admin/
+Disallow: /dashboard/
+Disallow: /api/
+Disallow: /login
+Disallow: /register
+Disallow: /profile/edit
+Disallow: /payment/
+Disallow: /checkout/
+
+# Permitir archivos estáticos importantes
+Allow: *.css
+Allow: *.js
+Allow: *.png
+Allow: *.jpg
+Allow: *.jpeg
+Allow: *.webp
+Allow: *.svg
+Allow: *.ico
+
+# Bloquear parámetros de tracking y sessión
+Disallow: /*?sessionId=
+Disallow: /*?utm_
+Disallow: /*?ref=
+Disallow: /*?track=
+
+# Crawl delay para ser amigables con los servidores
+Crawl-delay: 1
+
+# Sitemap location
+Sitemap: https://www.home-fixed.com/sitemap.xml
+
+# Configuraciones específicas para Google
+User-agent: Googlebot
+Allow: /
+Crawl-delay: 1
+
+# Configuraciones específicas para Bing
+User-agent: Bingbot
+Allow: /
+Crawl-delay: 2
+
+# Configuraciones específicas para Facebook
+User-agent: facebookexternalhit/*
+Allow: /
+Allow: /professional/
+Allow: /category/
+
+# Configuraciones específicas para Twitter
+User-agent: Twitterbot
+Allow: /
+Allow: /professional/
+Allow: /category/

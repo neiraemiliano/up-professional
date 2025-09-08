@@ -4,7 +4,7 @@ import { JSX } from "react";
 import AISearch from "../components/AISearch/AISearch";
 import PublicLayout from "../layout/PublicLayout";
 import UnifiedDashboardLayout from "../layout/UnifiedDashboardLayout";
-import UnifiedAdminDashboard from "../pages/AdminDashboard/UnifiedAdminDashboard";
+import AdminDashboard from "../pages/AdminDashboard/AdminDashboard";
 import AdminLogin from "../pages/AuthPages/AdminLogin";
 import SignIn from "../pages/AuthPages/SignIn";
 import SignUp from "../pages/AuthPages/SignUp";
@@ -163,7 +163,7 @@ export const routes: RouteConfig[] = [
   // admin - Updated to use Unified Layout
   {
     path: "/admin",
-    element: <UnifiedAdminDashboard />,
+    element: <AdminDashboard />,
     layout: <UnifiedDashboardLayout />,
     roles: ["admin"],
   },

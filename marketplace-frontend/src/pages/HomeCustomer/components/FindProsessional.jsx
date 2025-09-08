@@ -3,7 +3,6 @@ import {
   ArrowRight,
   Award,
   CheckCircle,
-  Clock,
   Heart,
   Loader2,
   MapPin,
@@ -25,21 +24,24 @@ import AutocompleteSelect from "../../../components/Select/AutocompleteSelect";
 import TextArea from "../../../components/template/form/input/TextArea";
 import Button from "../../../components/template/ui/button/Button";
 import VoiceInput from "../../../components/VoiceInput/VoiceInput";
+import SEO from "../../../components/SEO/SEO";
 import {
   initialValues,
   validationSchema,
 } from "../../../config/forms/searchProfessional";
 import { getText } from "../../../config/texts/texts";
-import { useCategories } from "../../../hooks/api/categories";
 import { useFeatureFlags } from "../../../context/FeatureFlagsContext";
+import { useCategories } from "../../../hooks/api/categories";
 import { useLocations } from "../../../hooks/api/locations";
 import useGeolocation from "../../../hooks/useGeolocation";
+import { useSEO, SEO_CONFIGS } from "../../../hooks/useSEO";
 
 const FindProsessional = () => {
   const navigate = useNavigate();
   const [selectedCategory, setSelectedCategory] = useState("");
   const [nearestLocation, setNearestLocation] = useState(null);
   const [isVisible, setIsVisible] = useState(false);
+  const { getHomeStructuredData } = useSEO();
 
   const { data: categories = [] } = useCategories();
   const { data: locations = [] } = useLocations();
@@ -112,9 +114,14 @@ const FindProsessional = () => {
   });
 
   return (
-    <section
-      className="relative bg-gradient-to-br from-orange-50 via-white to-red-50 py-24 overflow-hidden"
-      id="buscar"
+    <>
+      <SEO
+        {...SEO_CONFIGS.home}
+        structuredData={getHomeStructuredData()}
+      />
+      <section
+        className="relative bg-gradient-to-br from-orange-50 via-white to-red-50 py-24 overflow-hidden"
+        id="buscar"
     >
       {/* Elementos decorativos de fondo premium */}
       <div className="absolute inset-0 -z-10">
@@ -135,19 +142,6 @@ const FindProsessional = () => {
       <div className="max-w-7xl mx-auto px-6 relative z-10">
         {/* Hero Section Premium */}
         <div className="text-center mb-16">
-          {/* Badge superior */}
-          <div
-            className={`inline-flex items-center gap-2 bg-gradient-to-r from-orange-100 to-red-100 text-orange-700 px-6 py-3 rounded-full text-sm font-bold mb-8 border border-orange-200 shadow-lg transform transition-all duration-700 ${
-              isVisible
-                ? "translate-y-0 opacity-100 scale-100"
-                : "translate-y-4 opacity-0 scale-95"
-            }`}
-          >
-            <Sparkles className="w-5 h-5" />
-            <span>{`Argentina's #1 Professional Marketplace`}</span>
-            <div className="w-2 h-2 bg-orange-500 rounded-full animate-pulse"></div>
-          </div>
-
           {/* Título principal */}
           <h1
             className={`text-5xl sm:text-6xl lg:text-7xl font-extrabold mb-8 leading-[1.1] transform transition-all duration-700 delay-200 ${
@@ -234,7 +228,7 @@ const FindProsessional = () => {
 
         {/* Formulario de búsqueda premium */}
         <div
-          className={`max-w-5xl mx-auto transform transition-all duration-700 delay-1000 ${
+          className={`max-w-6xl mx-auto transform transition-all duration-700 delay-1000 ${
             isVisible ? "translate-y-0 opacity-100" : "translate-y-8 opacity-0"
           }`}
         >
@@ -351,13 +345,13 @@ const FindProsessional = () => {
                     <MessageCircle className="w-6 h-6 text-orange-600" />
                     Contanos más sobre tu proyecto
                   </label>
-                  <p className="text-gray-600 max-w-3xl mx-auto text-lg">
+                  <p className="text-gray-600 max-w-3xl mx-auto my-2 text-lg">
                     Cuanto más detalles nos proporciones, mejores profesionales
                     podremos conectarte.
-                    <span className="font-bold text-orange-700 bg-orange-100 px-3 py-1 rounded-full ml-2">
-                      ¡Mejora tus resultados hasta un 70%!
-                    </span>
                   </p>
+                  <span className="font-bold text-orange-700 bg-orange-100 px-3 py-1  rounded-full ">
+                    ¡Mejora tus resultados hasta un 70%!
+                  </span>
                 </div>
 
                 <div className="bg-gradient-to-br from-orange-50/50 via-white to-red-50/50 p-8 rounded-2xl border-2 border-orange-200/50 shadow-inner relative">
@@ -703,6 +697,7 @@ const FindProsessional = () => {
         </div>
       </div>
     </section>
+    </>
   );
 };
 
