@@ -20,6 +20,7 @@
 ### 4. ✅ **Complex Chart Rendering**
 - **Problem**: Heavy chart rendering causing performance issues
 - **Fix**: Temporarily disabled chart components in overview
+- **Status**: Charts commented out until performance is optimized
 
 ### 5. ✅ **Public Analytics Endpoint**
 - **Problem**: None - working correctly ✅
