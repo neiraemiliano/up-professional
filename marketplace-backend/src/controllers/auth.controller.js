@@ -1,10 +1,22 @@
 // src/controllers/auth.controller.js
 
 const authService = require("../services/auth.service");
+const analyticsService = require("../services/analytics.service");
 
 async function register(req, res, next) {
   try {
     const result = await authService.register(req.body);
+    
+    // Track user registration event
+    analyticsService.trackUserRegistration(
+      result.user.id, 
+      result.user.role,
+      {
+        source: req.get("Referrer") || 'direct',
+        userAgent: req.get("User-Agent")
+      }
+    ).catch(err => console.error("Analytics tracking error:", err));
+
     res.status(201).json({
       success: true,
       data: result,

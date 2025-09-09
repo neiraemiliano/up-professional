@@ -25,6 +25,7 @@ model User {
   UrgentBookings UrgentBooking[]
   ClientPayments ServicePayment[] @relation("ClientPayments")
   PaymentNotifications PaymentNotification[] @relation("PaymentNotifications")
+  AnalyticsActivity AnalyticsUserActivity[]
 }
 
 model Professional {
@@ -457,4 +458,84 @@ model Announcement {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt @default(now())
   createdBy   String?  // Admin que creó
+}
+
+// Analytics System
+model AnalyticsEvent {
+  id          Int      @id @default(autoincrement())
+  eventType   String   // "user_registration", "search", "professional_contact", "booking_created", etc.
+  category    String   // "user", "professional", "search", "booking", "payment", "system"
+  action      String   // "create", "update", "delete", "view", "click", "search", "contact"
+  label       String?  // Additional context or label
+  value       Float?   // Numeric value if applicable
+  userId      Int?     // User who performed the action (nullable for anonymous)
+  professionalId Int? // Professional involved (if applicable)
+  bookingId   Int?     // Booking involved (if applicable)
+  sessionId   String?  // Session identifier
+  ipAddress   String?  // IP address for geolocation
+  userAgent   String?  // Browser/device info
+  referrer    String?  // Where user came from
+  metadata    Json?    // Additional event data (search terms, filters, etc.)
+  timestamp   DateTime @default(now())
+  createdAt   DateTime @default(now())
+}
+
+model AnalyticsDashboard {
+  id              Int      @id @default(autoincrement())
+  date            DateTime @unique @db.Date // Daily aggregated data
+  totalUsers      Int      @default(0)
+  newUsers        Int      @default(0)
+  totalProfessionals Int   @default(0)
+  newProfessionals Int     @default(0)
+  totalBookings   Int      @default(0)
+  newBookings     Int      @default(0)
+  totalRevenue    Float    @default(0)
+  newRevenue      Float    @default(0)
+  searchQueries   Int      @default(0)
+  professionalContacts Int @default(0)
+  userRegistrations Int    @default(0)
+  professionalRegistrations Int @default(0)
+  avgBookingValue Float    @default(0)
+  conversionRate  Float    @default(0)
+  bounceRate      Float    @default(0)
+  avgSessionDuration Int   @default(0) // in seconds
+  topSearchTerms  Json?    // Array of top search terms with counts
+  topCategories   Json?    // Array of most popular categories
+  deviceStats     Json?    // Desktop vs mobile usage
+  locationStats   Json?    // Geographic distribution
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt @default(now())
+}
+
+model AnalyticsUserActivity {
+  id              Int      @id @default(autoincrement())
+  userId          Int
+  date            DateTime @db.Date
+  pageViews       Int      @default(0)
+  sessionDuration Int      @default(0) // in seconds
+  searches        Int      @default(0)
+  bookingsCreated Int      @default(0)
+  professionalsContacted Int @default(0)
+  lastActivity    DateTime @default(now())
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt @default(now())
+  User            User     @relation(fields: [userId], references: [id])
+  
+  @@unique([userId, date])
+}
+
+model AnalyticsSearchMetrics {
+  id           Int      @id @default(autoincrement())
+  date         DateTime @db.Date
+  searchTerm   String
+  category     String?
+  resultCount  Int      @default(0)
+  clickThrough Int      @default(0) // How many clicked on results
+  conversions  Int      @default(0) // How many made contact/booking
+  avgPosition  Float?   // Average position of clicked results
+  metadata     Json?    // Filters used, location, etc.
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt @default(now())
+  
+  @@unique([date, searchTerm])
 }

@@ -6,6 +6,7 @@ infra:
 
 start: 
 	@echo "Running frontend and backend"
+	-tmux kill-session -t dev 2>/dev/null || true
 	tmux new-session -d -s dev "cd marketplace-frontend && npm run dev"
 	tmux split-window -h "cd marketplace-backend && npm run dev"
 	tmux attach-session -t dev

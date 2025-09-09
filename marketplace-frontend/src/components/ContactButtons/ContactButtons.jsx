@@ -1,18 +1,36 @@
 import { MessageCircle, Phone, Mail } from "lucide-react";
 import Button from "../template/ui/button/Button";
+import { useAnalytics } from "../../utils/analytics";
 
 const ContactButtons = ({ professional, className = "" }) => {
+  const { trackProfessionalContact } = useAnalytics();
+
   const handleWhatsApp = () => {
     const phone = professional?.phone || "5491123456789"; // Formato argentino
     const message = encodeURIComponent(
       `Hola ${professional?.name}! Vi tu perfil en la plataforma y me interesa contratar tus servicios. ¿Podrías darme más información?`
     );
     const whatsappUrl = `https://wa.me/${phone}?text=${message}`;
+    
+    // Track professional contact
+    trackProfessionalContact(professional?.id, 'whatsapp', {
+      professionalName: professional?.name,
+      professionalCategory: professional?.category,
+      source: 'contact_buttons'
+    });
+    
     window.open(whatsappUrl, "_blank", "noopener,noreferrer");
   };
 
   const handleCall = () => {
     if (professional?.phone) {
+      // Track phone contact
+      trackProfessionalContact(professional?.id, 'phone', {
+        professionalName: professional?.name,
+        professionalCategory: professional?.category,
+        source: 'contact_buttons'
+      });
+      
       window.location.href = `tel:${professional.phone}`;
     }
   };
@@ -22,6 +40,14 @@ const ContactButtons = ({ professional, className = "" }) => {
     const body = encodeURIComponent(
       `Hola ${professional?.name},\n\nVi tu perfil en la plataforma y me gustaría consultar sobre tus servicios.\n\n¡Gracias!`
     );
+    
+    // Track email contact
+    trackProfessionalContact(professional?.id, 'email', {
+      professionalName: professional?.name,
+      professionalCategory: professional?.category,
+      source: 'contact_buttons'
+    });
+    
     window.location.href = `mailto:${professional?.email}?subject=${subject}&body=${body}`;
   };
 

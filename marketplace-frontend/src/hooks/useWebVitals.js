@@ -7,7 +7,7 @@ export const useWebVitals = (reportVitals = true) => {
     // Función para reportar métricas
     const reportMetric = (metric) => {
       // En producción, enviar a Google Analytics o servicio de monitoring
-      if (process.env.NODE_ENV === 'production') {
+      if (import.meta.env.MODE === 'production') {
         // Google Analytics 4
         if (typeof gtag !== 'undefined') {
           gtag('event', metric.name, {
@@ -27,7 +27,7 @@ export const useWebVitals = (reportVitals = true) => {
       }
 
       // En desarrollo, mostrar en consola
-      if (process.env.NODE_ENV === 'development') {
+      if (import.meta.env.MODE === 'development') {
         console.group(`🔍 Web Vital: ${metric.name}`);
         console.log(`Value: ${metric.value}`);
         console.log(`Rating: ${metric.rating}`);
@@ -175,7 +175,7 @@ export const usePerformanceMonitor = () => {
 
 // Configurar service worker para cache estratégico
 export const setupServiceWorker = () => {
-  if ('serviceWorker' in navigator && process.env.NODE_ENV === 'production') {
+  if ('serviceWorker' in navigator && import.meta.env.MODE === 'production') {
     navigator.serviceWorker.register('/sw.js').then(registration => {
       console.log('SW registered: ', registration);
     }).catch(registrationError => {

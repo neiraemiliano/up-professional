@@ -1,6 +1,8 @@
 import { useState } from "react";
+import { useAnalytics } from "../../utils/analytics";
 
 const SearchSuggestions = ({ onSelect, category = "" }) => {
+  const { trackSearch } = useAnalytics();
   const [suggestions] = useState([
     // Electricista
     { 
@@ -70,7 +72,17 @@ const SearchSuggestions = ({ onSelect, category = "" }) => {
           <button
             key={index}
             type="button"
-            onClick={() => onSelect(suggestion.text)}
+            onClick={() => {
+              // Track search suggestion selection
+              trackSearch(suggestion.text, 0, categoryData.category, {
+                source: 'suggestion_click',
+                suggestionType: suggestion.urgent ? 'urgent' : 'normal',
+                estimatedTime: suggestion.estimatedTime,
+                avgPrice: suggestion.avgPrice
+              });
+              
+              onSelect(suggestion.text);
+            }}
             className="flex items-center justify-between p-3 bg-white border border-gray-200 rounded-lg hover:border-violet-300 hover:bg-violet-50 transition-all text-left group"
           >
             <div className="flex items-center gap-3">

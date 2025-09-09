@@ -23,10 +23,10 @@ const Button: React.FC<ButtonProps> = ({
   disabled = false,
   type,
 }) => {
-  // Size Classes
+  // Size Classes - Mobile-first approach
   const sizeClasses = {
-    sm: "px-4 py-3 text-sm",
-    md: "px-5 py-3.5 text-sm",
+    sm: "mobile-button-size px-3 py-2 text-sm sm:px-4 sm:py-3",
+    md: "mobile-button-size px-4 py-3 text-sm sm:px-5 sm:py-3.5",
   };
 
   // Variant Classes
@@ -40,7 +40,7 @@ const Button: React.FC<ButtonProps> = ({
   return (
     <button
       type={type}
-      className={`w-fullitems-center justify-center gap-2 rounded-lg transition ${className} ${
+      className={`w-full flex items-center justify-center gap-2 rounded-lg font-medium transition-all duration-200 ${className} ${
         sizeClasses[size]
       } ${variantClasses[variant]} ${
         disabled ? "cursor-not-allowed opacity-50" : ""

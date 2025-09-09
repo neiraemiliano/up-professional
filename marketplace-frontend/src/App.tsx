@@ -5,6 +5,7 @@ import { AuthProvider } from "./context/AuthContext";
 import { FeatureFlagsProvider } from "./context/FeatureFlagsContext";
 import { AnnouncementsProvider } from "./context/AnnouncementsContext";
 import { getText } from "./config/texts/texts";
+import PWAPrompt from "./components/PWA/PWAPrompt";
 
 export default function App() {
   return (
@@ -18,6 +19,7 @@ export default function App() {
                 description={getText("appTitle")}
               />
               <AppRoutes />
+              <PWAPrompt />
             </AppWrapper>
           </ThemeProvider>
         </AnnouncementsProvider>

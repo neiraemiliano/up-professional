@@ -1,5 +1,6 @@
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
+const analyticsService = require("../services/analytics.service");
 
 class SearchController {
   // Obtener sugerencias por categoría
@@ -23,6 +24,8 @@ class SearchController {
   async intelligentSearch(req, res) {
     try {
       const { query, categoryId, limit = 5 } = req.query;
+      const userId = req.user?.id;
+      const sessionId = req.sessionId;
 
       if (!query || query.length < 2) {
         return res.json({ data: [] });
@@ -47,6 +50,19 @@ class SearchController {
         orderBy: { popularity: "desc" },
         take: parseInt(limit)
       });
+
+      // Track search event
+      analyticsService.trackSearch(
+        query,
+        categoryId,
+        suggestions.length,
+        userId,
+        sessionId,
+        {
+          limit: parseInt(limit),
+          hasResults: suggestions.length > 0
+        }
+      ).catch(err => console.error("Analytics tracking error:", err));
 
       res.json({ data: suggestions });
     } catch (error) {

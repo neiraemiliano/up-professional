@@ -1,0 +1,17 @@
+<svg width="96" height="96" viewBox="0 0 96 96" fill="none" xmlns="http://www.w3.org/2000/svg">
+<rect width="96" height="96" rx="21" fill="#EF4444"/>
+<rect width="43" height="53" x="26.5" y="13" rx="5" ry="5" stroke="white" stroke-width="4" fill="none"/>
+<path d="M40 88v-11h16v11" stroke="white" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M32 26h3" stroke="white" stroke-width="3" stroke-linecap="round"/>
+<path d="M61 26h3" stroke="white" stroke-width="3" stroke-linecap="round"/>
+<path d="M46.5 26h3" stroke="white" stroke-width="3" stroke-linecap="round"/>
+<path d="M46.5 44h3" stroke="white" stroke-width="3" stroke-linecap="round"/>
+<path d="M46.5 62h3" stroke="white" stroke-width="3" stroke-linecap="round"/>
+<path d="M61 44h3" stroke="white" stroke-width="3" stroke-linecap="round"/>
+<path d="M61 62h3" stroke="white" stroke-width="3" stroke-linecap="round"/>
+<path d="M32 44h3" stroke="white" stroke-width="3" stroke-linecap="round"/>
+<path d="M32 62h3" stroke="white" stroke-width="3" stroke-linecap="round"/>
+<!-- Emergency warning icon -->
+<circle cx="48" cy="76" r="2.5" fill="#FFD700"/>
+<path d="M48 22L46.5 70h3L48 22z" fill="#FFD700"/>
+</svg>

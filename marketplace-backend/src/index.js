@@ -1,5 +1,7 @@
 // src/index.js
-require("dotenv").config();
+// Load environment configuration based on NODE_ENV
+const envFile = process.env.NODE_ENV === 'production' ? '.env.production' : '.env.development';
+require("dotenv").config({ path: envFile });
 const express = require("express");
 const morgan = require("morgan");
 const cors = require("cors");
@@ -23,6 +25,7 @@ const adminRoutes = require("./routes/admin.routes");
 const paymentRoutes = require("./routes/payment.routes");
 const featureFlagRoutes = require("./routes/featureFlag.routes");
 const contentRoutes = require("./routes/content.routes");
+const analyticsRoutes = require("./routes/analytics.routes");
 // Middlewares
 const { authMiddleware, requireRole } = require("./middlewares/auth");
 const notFound = require("./middlewares/notFound");
@@ -61,6 +64,8 @@ app.use("/api/verification", verificationRoutes);
 app.use("/api/payments", paymentRoutes);
 app.use("/api/feature-flags", featureFlagRoutes);
 app.use("/api", contentRoutes);
+// Analytics routes - event tracking is public, dashboard is admin-protected
+app.use("/api/analytics", analyticsRoutes);
 
 app.get("/api/health", async (req, res) => {
   try {

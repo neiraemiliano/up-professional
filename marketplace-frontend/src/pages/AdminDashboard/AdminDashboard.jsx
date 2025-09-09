@@ -57,6 +57,7 @@ import LoadingSpinner from "../../components/LoadingSpinner/LoadingSpinner";
 import PaymentNotifications from "../../components/Notifications/PaymentNotifications";
 import Button from "../../components/template/ui/button/Button";
 import ActivityLog from "./components/ActivityLog";
+import AnalyticsTab from "./components/AnalyticsTab";
 import AnnouncementManagement from "./components/AnnouncementManagement";
 import BookingManagement from "./components/BookingManagement";
 import ContentManagement from "./components/ContentManagement";
@@ -1159,9 +1160,10 @@ const AdminDashboard = () => {
                 </p>
                 <p className="text-2xl font-bold text-green-600">
                   $
-                  {financialMetrics?.monthlyRevenue ||
-                    financialMetrics?.totalRevenue ||
-                    "152,000"}
+                  {financialMetrics?.monthlyRevenue?.current || 
+                   (typeof financialMetrics?.totalRevenue === 'object' ? 
+                     (financialMetrics?.totalRevenue?.current || financialMetrics?.totalRevenue?.amount || "152,000") :
+                     (financialMetrics?.totalRevenue || "152,000"))}
                 </p>
                 <div className="flex items-center gap-1 mt-2">
                   <TrendingUp className="w-4 h-4 text-green-500" />
@@ -1181,9 +1183,13 @@ const AdminDashboard = () => {
                   Transacciones
                 </p>
                 <p className="text-2xl font-bold text-blue-600">
-                  {financialMetrics?.totalTransactions ||
-                    financialMetrics?.transactions ||
-                    "2,847"}
+                  {(typeof financialMetrics?.totalTransactions === 'object' ? 
+                     (financialMetrics?.totalTransactions?.current || financialMetrics?.totalTransactions?.count || "2,847") :
+                     (financialMetrics?.totalTransactions)) ||
+                   (typeof financialMetrics?.transactions === 'object' ? 
+                     (financialMetrics?.transactions?.current || financialMetrics?.transactions?.count || "2,847") :
+                     (financialMetrics?.transactions)) ||
+                   "2,847"}
                 </p>
                 <div className="flex items-center gap-1 mt-2">
                   <TrendingUp className="w-4 h-4 text-blue-500" />
@@ -1418,6 +1424,8 @@ const AdminDashboard = () => {
         return <AnnouncementManagement />;
       case "feature-flags":
         return renderFeatureFlags();
+      case "analytics":
+        return <AnalyticsTab />;
       default:
         return renderOverview();
     }
@@ -1456,6 +1464,7 @@ const AdminDashboard = () => {
           <div className="flex overflow-x-auto space-x-1">
             {[
               { key: "overview", label: "Overview", icon: Home },
+              { key: "analytics", label: "Analytics", icon: BarChart3, isNew: true },
               { key: "users", label: "Usuarios", icon: Users },
               { key: "professionals", label: "Profesionales", icon: UserCheck },
               { key: "bookings", label: "Trabajos", icon: Briefcase },
@@ -1482,7 +1491,7 @@ const AdminDashboard = () => {
                 >
                   <IconComponent className="w-4 h-4" />
                   {tab.label}
-                  {tab.key === "feature-flags" && (
+                  {(tab.key === "feature-flags" || tab.isNew) && (
                     <span className="bg-purple-100 text-purple-800 text-xs px-2 py-1 rounded-full ml-1">
                       Nuevo
                     </span>
