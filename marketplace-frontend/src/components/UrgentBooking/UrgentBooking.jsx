@@ -1,6 +1,6 @@
 import { AlertTriangle, Clock, Zap, Phone } from "lucide-react";
 import { useState } from "react";
-import Button from "../template/ui/button/Button";
+import { Button } from "../atoms/Button/Button";
 import Badge from "../Badge/Badge";
 
 const UrgentBooking = ({ onClose, onConfirm, professional }) => {

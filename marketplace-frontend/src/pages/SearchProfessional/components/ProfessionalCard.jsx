@@ -17,60 +17,91 @@ import {
   Sparkles
 } from "lucide-react";
 import { Link } from "react-router";
-import { useState } from "react";
+import { useState, memo, useMemo, useCallback } from "react";
 import Badge from "../../../components/Badge/Badge";
 import UrgentBooking from "../../../components/UrgentBooking/UrgentBooking";
 import SubscriptionBadge from "../../../components/SubscriptionBadge/SubscriptionBadge";
 
 const ProfessionalCard = ({ professional }) => {
-  // Datos reales del backend
-  const isAvailableToday = professional?.emergencyService || false;
-  const isVerified = professional?.isVerified || false;
-  const respondsQuickly = professional?.respondsQuickly || false;
-  const completedJobs = professional?.completedJobs || 0;
-  const distance = (Math.random() * 10 + 0.5).toFixed(1); // Esto se calculará con geolocalización después
-  const supportsUrgent = professional?.supportsUrgent || false;
-  const isPopular = professional?.avgRating >= 4.8 && completedJobs >= 50; // Criterio: rating alto + trabajos
-  const responseTime = professional?.responseTime || 30;
+  // Memoizar cálculos costosos para evitar re-renders innecesarios
+  const professionalStats = useMemo(() => ({
+    isAvailableToday: professional?.emergencyService || false,
+    isVerified: professional?.isVerified || false,
+    respondsQuickly: professional?.respondsQuickly || false,
+    completedJobs: professional?.completedJobs || 0,
+    distance: professional?.distance ? professional.distance.toFixed(1) : 'N/A',
+    supportsUrgent: professional?.supportsUrgent || false,
+    isPopular: professional?.avgRating >= 4.8 && (professional?.completedJobs || 0) >= 50,
+    responseTime: professional?.responseTime || 30
+  }), [
+    professional?.emergencyService,
+    professional?.isVerified,
+    professional?.respondsQuickly,
+    professional?.completedJobs,
+    professional?.distance,
+    professional?.supportsUrgent,
+    professional?.avgRating,
+    professional?.responseTime
+  ]);
   
   const [showUrgentModal, setShowUrgentModal] = useState(false);
   const [isFavorited, setIsFavorited] = useState(false);
 
-  const handleWhatsApp = (e) => {
+  // Memoizar handlers para evitar re-renders de componentes hijos
+  const handleWhatsApp = useCallback(async (e) => {
     e.preventDefault();
     e.stopPropagation();
-    const phone = "5491123456789";
-    const message = encodeURIComponent(
-      `¡Hola ${professional?.name}! 👋 Vi tu perfil en Home Fixed y me interesa contratar tus servicios. ¿Podrías ayudarme?`
-    );
-    const whatsappUrl = `https://wa.me/${phone}?text=${message}`;
-    window.open(whatsappUrl, "_blank", "noopener,noreferrer");
-  };
+    
+    try {
+      // Use backend API to generate WhatsApp URL with real professional data
+      const response = await fetch(`/api/professionals/${professional.id}/whatsapp`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          message: `¡Hola ${professional?.name}! 👋 Vi tu perfil en Home Fixed y me interesa contratar tus servicios. ¿Podrías ayudarme?`,
+          isUrgent: false
+        })
+      });
+      
+      const data = await response.json();
+      
+      if (data.data?.whatsappURL) {
+        window.open(data.data.whatsappURL, "_blank", "noopener,noreferrer");
+      } else {
+        // Fallback: show error message to user
+        alert('Error: No se pudo generar el enlace de WhatsApp para este profesional.');
+      }
+    } catch (error) {
+      console.error('Error generating WhatsApp URL:', error);
+      alert('Error: No se pudo contactar al profesional por WhatsApp.');
+    }
+  }, [professional.id, professional?.name]);
 
-  const handleCall = (e) => {
+  const handleCall = useCallback((e) => {
     e.preventDefault();
     e.stopPropagation();
     window.location.href = `tel:+5491123456789`;
-  };
+  }, []);
 
-  const handleUrgent = (e) => {
+  const handleUrgent = useCallback((e) => {
     e.preventDefault();
     e.stopPropagation();
     setShowUrgentModal(true);
-  };
+  }, []);
 
-  const handleFavorite = (e) => {
+  const handleFavorite = useCallback((e) => {
     e.preventDefault();
     e.stopPropagation();
-    setIsFavorited(!isFavorited);
+    setIsFavorited(prev => !prev);
     // Aquí iría la lógica para guardar en favoritos
-  };
+  }, []);
 
-  const handleUrgentConfirm = (urgentData) => {
-    console.log("Urgent booking confirmed:", urgentData);
+  const handleUrgentConfirm = useCallback((urgentData) => {
     setShowUrgentModal(false);
     alert(`¡Reserva urgente confirmada! Te contactaremos en 5 minutos por WhatsApp.`);
-  };
+  }, []);
 
   return (
     <>
@@ -107,7 +138,7 @@ const ProfessionalCard = ({ professional }) => {
           </div>
 
           {/* Popular Badge */}
-          {isPopular && (
+          {professionalStats.isPopular && (
             <div className="absolute top-3 right-3 bg-gradient-to-r from-orange-500 to-red-500 text-white px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1 shadow-lg z-10">
               <TrendingUp className="w-3 h-3" />
               Popular
@@ -137,7 +168,7 @@ const ProfessionalCard = ({ professional }) => {
               </div>
               
               {/* Status indicator */}
-              {isAvailableToday && (
+              {professionalStats.isAvailableToday && (
                 <div className="absolute -bottom-1 -right-1">
                   <div className="w-5 h-5 bg-green-500 border-2 border-white rounded-full flex items-center justify-center">
                     <div className="w-2 h-2 bg-white rounded-full"></div>
@@ -152,12 +183,12 @@ const ProfessionalCard = ({ professional }) => {
               </h4>
               <p className="text-sm text-gray-600 flex items-center gap-1 mb-1">
                 <MapPin className="w-4 h-4 text-orange-500" /> 
-                {professional?.location?.city}, {professional?.location?.province} • {distance} km
+                {professional?.location?.city}, {professional?.location?.province} • {professionalStats.distance} km
               </p>
-              {respondsQuickly && (
+              {professionalStats.respondsQuickly && (
                 <p className="text-xs text-green-600 font-semibold flex items-center gap-1">
                   <Zap className="w-3 h-3" />
-                  Responde en ~{responseTime} min
+                  Responde en ~{professionalStats.responseTime} min
                 </p>
               )}
             </div>
@@ -173,19 +204,19 @@ const ProfessionalCard = ({ professional }) => {
               size="sm"
             />
             
-            {isVerified && (
+            {professionalStats.isVerified && (
               <div className="inline-flex items-center gap-1 bg-gradient-to-r from-green-100 to-emerald-100 text-green-700 px-3 py-1 rounded-full text-xs font-semibold border border-green-200">
                 <Shield className="w-3 h-3" />
                 Verificado
               </div>
             )}
-            {isAvailableToday && (
+            {professionalStats.isAvailableToday && (
               <div className="inline-flex items-center gap-1 bg-gradient-to-r from-blue-100 to-cyan-100 text-blue-700 px-3 py-1 rounded-full text-xs font-semibold border border-blue-200">
                 <Clock className="w-3 h-3" />
                 Disponible hoy
               </div>
             )}
-            {respondsQuickly && (
+            {professionalStats.respondsQuickly && (
               <div className="inline-flex items-center gap-1 bg-gradient-to-r from-orange-100 to-yellow-100 text-orange-700 px-3 py-1 rounded-full text-xs font-semibold border border-orange-200">
                 <Zap className="w-3 h-3" />
                 Respuesta rápida
@@ -209,7 +240,7 @@ const ProfessionalCard = ({ professional }) => {
                   {professional?.avgRating ? professional.avgRating.toFixed(1) : '0.0'}
                 </span>
               </div>
-              <span className="text-xs text-gray-600">{completedJobs} trabajos</span>
+              <span className="text-xs text-gray-600">{professionalStats.completedJobs} trabajos</span>
             </div>
             
             <div className="bg-gradient-to-r from-green-50 to-emerald-50 p-3 rounded-xl border border-green-200">
@@ -232,7 +263,7 @@ const ProfessionalCard = ({ professional }) => {
               </div>
             </div>
             <div className="text-right">
-              {isPopular && (
+              {professionalStats.isPopular && (
                 <>
                   <div className="text-xs text-gray-500 mb-1">⭐ Premium</div>
                   <div className="flex items-center gap-1">
@@ -241,7 +272,7 @@ const ProfessionalCard = ({ professional }) => {
                   </div>
                 </>
               )}
-              {isVerified && (
+              {professionalStats.isVerified && (
                 <div className="flex items-center gap-1">
                   <Shield className="w-4 h-4 text-green-500" />
                   <span className="text-xs font-semibold text-green-700">Verificado</span>
@@ -270,7 +301,7 @@ const ProfessionalCard = ({ professional }) => {
           </div>
 
           {/* Urgent service button */}
-          {supportsUrgent && (
+          {professionalStats.supportsUrgent && (
             <button
               onClick={handleUrgent}
               className="w-full mt-3 bg-gradient-to-r from-red-500 to-pink-600 hover:from-red-600 hover:to-pink-700 text-white py-3 px-4 rounded-xl flex items-center justify-center gap-2 text-sm font-bold transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 active:scale-95 relative z-10 overflow-hidden"
@@ -305,4 +336,7 @@ const ProfessionalCard = ({ professional }) => {
   );
 };
 
-export default ProfessionalCard;
+export default memo(ProfessionalCard);
+
+// Add display name for better debugging
+ProfessionalCard.displayName = 'ProfessionalCard';

@@ -62,5 +62,17 @@ export const professionalApi = {
   deleteService: async (id) => {
     const response = await api.delete(`/professionals/services/${id}`);
     return response.data;
+  },
+
+  // Check onboarding status
+  checkOnboardingStatus: async () => {
+    const response = await api.get('/professionals/onboarding-status');
+    return response.data;
+  },
+
+  // Mark onboarding as completed
+  markOnboardingComplete: async () => {
+    const response = await api.post('/professionals/complete-onboarding');
+    return response.data;
   }
 };

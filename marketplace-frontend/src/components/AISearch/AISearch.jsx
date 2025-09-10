@@ -18,7 +18,7 @@ import {
   Zap
 } from 'lucide-react';
 import ProfessionalCard from '../../pages/SearchProfessional/components/ProfessionalCard';
-import Button from '../template/ui/button/Button';
+import { Button } from '../atoms/Button/Button';
 import { useAISearch, useAISuggestions } from '../../hooks/api/aiSearch';
 
 const AISearch = () => {

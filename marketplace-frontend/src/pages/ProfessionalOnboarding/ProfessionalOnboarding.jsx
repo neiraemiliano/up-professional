@@ -15,12 +15,10 @@ import {
   Phone,
   Shield,
   DollarSign,
-  Calendar,
-  Award
+  Calendar
 } from 'lucide-react';
 import { useMutation } from '@tanstack/react-query';
 import { professionalApi } from '../../api/professional';
-import SubscriptionPlans from '../../components/SubscriptionPlans/SubscriptionPlans';
 
 const ProfessionalOnboarding = () => {
   const navigate = useNavigate();
@@ -52,13 +50,10 @@ const ProfessionalOnboarding = () => {
     languages: ['Español'],
     
     // Step 5: Portfolio
-    portfolioImages: [],
-    
-    // Step 6: Subscription Plan
-    selectedPlan: 'free'
+    portfolioImages: []
   });
 
-  const totalSteps = 6;
+  const totalSteps = 5;
 
   // Get user data from location state (passed after normal registration)
   const userData = location.state?.userData || null;
@@ -96,9 +91,11 @@ const ProfessionalOnboarding = () => {
   });
 
   const handleSubmit = () => {
+    const { selectedPlan, ...restFormData } = formData;
     const professionalData = {
       userId: userData.id,
-      ...formData,
+      ...restFormData,
+      // Remove subscription plan from onboarding - handle separately
       avgRating: 0,
       completedJobs: 0,
       respondsQuickly: false,
@@ -449,28 +446,6 @@ const ProfessionalOnboarding = () => {
             </div>
           )}
 
-          {/* Step 6: Subscription Plan */}
-          {currentStep === 6 && (
-            <div className="space-y-6">
-              <div className="text-center mb-8">
-                <Award className="w-16 h-16 text-orange-500 mx-auto mb-4" />
-                <h2 className="text-3xl font-bold text-gray-800 mb-2">Elegí tu Plan</h2>
-                <p className="text-gray-600">Maximizá tus oportunidades de negocio</p>
-              </div>
-
-              <SubscriptionPlans 
-                selectedPlan={formData.selectedPlan}
-                onPlanSelect={(planId) => updateFormData('selectedPlan', planId)}
-                showYearly={true}
-              />
-
-              <div className="bg-blue-50 border-l-4 border-blue-400 p-4 rounded-lg">
-                <p className="text-sm text-blue-700">
-                  💡 <strong>¡Podés cambiar tu plan en cualquier momento!</strong> Comenzá con el plan gratuito y actualizá cuando estés listo.
-                </p>
-              </div>
-            </div>
-          )}
 
           {/* Navigation Buttons */}
           <div className="flex justify-between mt-8 pt-8 border-t border-gray-200">

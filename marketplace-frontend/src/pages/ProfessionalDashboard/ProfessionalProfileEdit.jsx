@@ -147,7 +147,6 @@ const ProfessionalProfileEdit = () => {
 
   const handleSave = async () => {
     // In real app, save to API
-    console.log('Saving profile data:', profileData);
     alert('Perfil actualizado exitosamente!');
   };
 

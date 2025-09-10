@@ -1,6 +1,6 @@
 import { useState } from "react";
 import ComponentCard from "../../common/ComponentCard";
-import Input from "../input/InputField";
+import { Input } from "../../../atoms/Input/Input";
 import Label from "../Label";
 export default function InputStates() {
   const [email, setEmail] = useState("");

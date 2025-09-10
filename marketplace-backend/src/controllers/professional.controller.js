@@ -1,9 +1,7 @@
 // src/controllers/professional.controller.js
 const generateController = require("./base.controller");
 const professionalService = require("../services/professional.service");
-const { PrismaClient } = require("@prisma/client");
-
-const prisma = new PrismaClient();
+const prisma = require("../config/database");
 const baseController = generateController(professionalService);
 
 class ProfessionalController {
@@ -29,6 +27,50 @@ class ProfessionalController {
         success: false,
         error: error.message || 'Error completando el registro profesional',
         message: error.message || 'Error completando el registro profesional'
+      });
+    }
+  }
+
+  // Check professional onboarding status
+  async checkOnboardingStatus(req, res) {
+    try {
+      const userId = req.user.id;
+      console.log('checkOnboardingStatus called with userId:', userId);
+      const onboardingStatus = await professionalService.checkOnboardingStatus(userId);
+      
+      res.json({
+        success: true,
+        data: onboardingStatus,
+        message: 'Estado del onboarding obtenido exitosamente'
+      });
+    } catch (error) {
+      console.error('Error checking onboarding status:', error);
+      res.status(error.status || 500).json({
+        success: false,
+        error: error.message || 'Error verificando estado del onboarding',
+        message: error.message || 'Error verificando estado del onboarding'
+      });
+    }
+  }
+
+  // Mark onboarding as completed
+  async markOnboardingComplete(req, res) {
+    try {
+      const userId = req.user.id;
+      console.log('markOnboardingComplete called with userId:', userId);
+      const result = await professionalService.markOnboardingComplete(userId);
+      
+      res.json({
+        success: true,
+        data: result,
+        message: 'Onboarding marcado como completado exitosamente'
+      });
+    } catch (error) {
+      console.error('Error marking onboarding complete:', error);
+      res.status(error.status || 500).json({
+        success: false,
+        error: error.message || 'Error marcando onboarding como completado',
+        message: error.message || 'Error marcando onboarding como completado'
       });
     }
   }

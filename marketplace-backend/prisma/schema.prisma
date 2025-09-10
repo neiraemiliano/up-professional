@@ -8,153 +8,151 @@ datasource db {
 }
 
 model User {
-  id            Int            @id @default(autoincrement())
-  name          String
-  lastName      String         @default("")
-  email         String         @unique
-  phone         String         @default("")
-  password      String
-  role          String
-  avatarUrl     String?
-  isVerified    Boolean        @default(false)
-  createdAt     DateTime       @default(now())
-  updatedAt     DateTime       @updatedAt @default(now())
-  Professional  Professional?  @relation("UserToProfessional")
-  Bookings      Booking[]
-  Reviews       Review[]
-  UrgentBookings UrgentBooking[]
-  ClientPayments ServicePayment[] @relation("ClientPayments")
-  PaymentNotifications PaymentNotification[] @relation("PaymentNotifications")
-  AnalyticsActivity AnalyticsUserActivity[]
+  id                   Int                     @id @default(autoincrement())
+  name                 String
+  email                String                  @unique
+  password             String
+  role                 String
+  createdAt            DateTime                @default(now())
+  lastName             String                  @default("")
+  phone                String                  @default("")
+  avatarUrl            String?
+  isVerified           Boolean                 @default(false)
+  updatedAt            DateTime                @default(now()) @updatedAt
+  AnalyticsActivity    AnalyticsUserActivity[]
+  Bookings             Booking[]
+  PaymentNotifications PaymentNotification[]   @relation("PaymentNotifications")
+  Professional         Professional?           @relation("UserToProfessional")
+  Reviews              Review[]
+  ClientPayments       ServicePayment[]        @relation("ClientPayments")
+  UrgentBookings       UrgentBooking[]
 }
 
 model Professional {
-  id             Int       @id @default(autoincrement())
-  userId         Int       @unique
-  description    String?
-  experience     Int?      // Años de experiencia
-  bio            String?
-  priceFrom      Float?
-  avgRating      Float     @default(0)
-  completedJobs  Int       @default(0)
-  respondsQuickly Boolean   @default(false)
-  isVerified     Boolean   @default(false)
-  supportsUrgent Boolean   @default(false)
-  latitude       Float?
-  longitude      Float?
-  workingHours   String?   // "Lun-Vie 8:00-18:00, Sáb 9:00-13:00"
-  emergencyService Boolean @default(false)
-  insurance      String?   // "ART cubierta hasta $2.000.000"
-  responseTime   Int?      // Tiempo promedio de respuesta en minutos
-  satisfactionRate Float   @default(0) // Porcentaje de satisfacción
-  languages      Json?     // Array de idiomas ["Español", "Inglés"]
-  // Subscription fields
-  subscriptionPlan String   @default("free") // "free", "premium", "pro"
-  subscriptionStatus String @default("active") // "active", "expired", "cancelled"
-  subscriptionExpiresAt DateTime? // Cuando expira la suscripción
-  isPriority     Boolean   @default(false) // Para aparecer primero en búsquedas
-  isFeatured     Boolean   @default(false) // Para ser destacado
-  monthlyLeadLimit Int     @default(5) // Límite mensual de contactos
-  monthlyLeadsUsed Int     @default(0) // Contactos usados este mes
-  leadsResetDate DateTime  @default(now()) // Fecha de reset de leads
-  createdAt      DateTime  @default(now())
-  updatedAt      DateTime  @updatedAt @default(now())
-  locationId     Int?
-  location       Location? @relation(fields: [locationId], references: [id])
-  User           User      @relation("UserToProfessional", fields: [userId], references: [id])
-  Services       Service[]
-  Reviews        Review[]
-  Portfolio      PortfolioImage[]
-  Availability   Availability[]
-  UrgentBookings UrgentBooking[]
-  VerificationRequests VerificationRequest[]
-  Certifications Certification[]
-  Specialties    ProfessionalSpecialty[]
-  Subscriptions  Subscription[]
-  LeadContacts   LeadContact[]
-  ServicePayments ServicePayment[] @relation("ProfessionalPayments")
-  Commissions    Commission[]
+  id                    Int                     @id @default(autoincrement())
+  userId                Int                     @unique
+  description           String?
+  experience            Int?
+  createdAt             DateTime                @default(now())
+  locationId            Int?
+  avgRating             Float                   @default(0)
+  bio                   String?
+  completedJobs         Int                     @default(0)
+  isVerified            Boolean                 @default(false)
+  latitude              Float?
+  longitude             Float?
+  priceFrom             Float?
+  respondsQuickly       Boolean                 @default(false)
+  supportsUrgent        Boolean                 @default(false)
+  updatedAt             DateTime                @default(now()) @updatedAt
+  emergencyService      Boolean                 @default(false)
+  insurance             String?
+  languages             Json?
+  responseTime          Int?
+  satisfactionRate      Float                   @default(0)
+  workingHours          String?
+  isFeatured            Boolean                 @default(false)
+  isPriority            Boolean                 @default(false)
+  leadsResetDate        DateTime                @default(now())
+  monthlyLeadLimit      Int                     @default(5)
+  monthlyLeadsUsed      Int                     @default(0)
+  subscriptionExpiresAt DateTime?
+  subscriptionPlan      String                  @default("free")
+  subscriptionStatus    String                  @default("active")
+  onboardingCompletedAt DateTime?
+  Availability          Availability[]
+  Certifications        Certification[]
+  Commissions           Commission[]
+  LeadContacts          LeadContact[]
+  Portfolio             PortfolioImage[]
+  location              Location?               @relation(fields: [locationId], references: [id])
+  User                  User                    @relation("UserToProfessional", fields: [userId], references: [id])
+  Specialties           ProfessionalSpecialty[]
+  Reviews               Review[]
+  Services              Service[]
+  ServicePayments       ServicePayment[]        @relation("ProfessionalPayments")
+  Subscriptions         Subscription[]
+  UrgentBookings        UrgentBooking[]
+  VerificationRequests  VerificationRequest[]
 }
 
 model Category {
-  id          Int        @id @default(autoincrement())
-  name        String     
-  value       String     @default("")
-  icon        String?
-  avgPrice    Float?
-  priceRange  String?    // "5000-15000"
-  Services    Service[]
+  id                Int                @id @default(autoincrement())
+  name              String
+  icon              String?
+  value             String             @default("")
+  avgPrice          Float?
+  priceRange        String?
   SearchSuggestions SearchSuggestion[]
-  Specialties Specialty[]
+  Services          Service[]
+  Specialties       Specialty[]
 }
 
 model Service {
-  id              Int           @id @default(autoincrement())
-  professionalId  Int
-  categoryId      Int
-  title           String
-  description     String?
-  price           Float
-  priceType       String        @default("hourly") // "hourly", "fixed", "quote"
-  estimatedTime   String?       // "2-3 horas"
-  includesMaterials Boolean     @default(false)
-  isUrgentAvailable Boolean     @default(false)
-  urgentSurcharge Float?        // 0.25 = +25%
-  createdAt       DateTime      @default(now())
-  updatedAt       DateTime      @updatedAt @default(now())
-  Professional    Professional  @relation(fields: [professionalId], references: [id])
-  Category        Category      @relation(fields: [categoryId], references: [id])
-  Bookings        Booking[]
+  id                Int          @id @default(autoincrement())
+  professionalId    Int
+  categoryId        Int
+  title             String
+  description       String?
+  price             Float
+  createdAt         DateTime     @default(now())
+  estimatedTime     String?
+  includesMaterials Boolean      @default(false)
+  isUrgentAvailable Boolean      @default(false)
+  priceType         String       @default("hourly")
+  updatedAt         DateTime     @default(now()) @updatedAt
+  urgentSurcharge   Float?
+  Bookings          Booking[]
+  Category          Category     @relation(fields: [categoryId], references: [id])
+  Professional      Professional @relation(fields: [professionalId], references: [id])
 }
 
 model Booking {
-  id           Int        @id @default(autoincrement())
-  userId       Int
-  serviceId    Int
-  status       String     // "pending", "confirmed", "in_progress", "completed", "cancelled"
-  paymentStatus String    @default("pending") // "pending", "paid", "partial", "refunded"
-  bookingDate  DateTime
-  description  String?
-  estimatedPrice Float?
-  finalPrice   Float?
-  includesMaterials Boolean @default(false)
-  createdAt    DateTime   @default(now())
-  updatedAt    DateTime   @updatedAt @default(now())
-  User         User       @relation(fields: [userId], references: [id])
-  Service      Service    @relation(fields: [serviceId], references: [id])
-  ServicePayments ServicePayment[]
+  id                Int              @id @default(autoincrement())
+  userId            Int
+  serviceId         Int
+  status            String
+  bookingDate       DateTime
+  createdAt         DateTime         @default(now())
+  description       String?
+  estimatedPrice    Float?
+  finalPrice        Float?
+  includesMaterials Boolean          @default(false)
+  updatedAt         DateTime         @default(now()) @updatedAt
+  paymentStatus     String           @default("pending")
+  Service           Service          @relation(fields: [serviceId], references: [id])
+  User              User             @relation(fields: [userId], references: [id])
+  ServicePayments   ServicePayment[]
 }
 
 model Review {
-  id              Int           @id @default(autoincrement())
-  userId          Int
-  professionalId  Int
-  rating          Int           
-  comment         String?
-  aspectRatings   Json?         // {punctuality: true, quality: true, communication: false, ...}
-  isAnonymous     Boolean       @default(false)
-  wouldRecommend  Boolean       @default(true)
-  serviceDate     DateTime?     // Fecha cuando recibió el servicio
-  helpful         Int           @default(0) // Contador de "útil"
-  service         String?       // Nombre del servicio específico
-  createdAt       DateTime      @default(now())
-  updatedAt       DateTime      @updatedAt @default(now())
-  User            User          @relation(fields: [userId], references: [id])
-  Professional    Professional  @relation(fields: [professionalId], references: [id])
+  id             Int          @id @default(autoincrement())
+  userId         Int
+  professionalId Int
+  rating         Int
+  comment        String?
+  createdAt      DateTime     @default(now())
+  aspectRatings  Json?
+  helpful        Int          @default(0)
+  isAnonymous    Boolean      @default(false)
+  service        String?
+  serviceDate    DateTime?
+  updatedAt      DateTime     @default(now()) @updatedAt
+  wouldRecommend Boolean      @default(true)
+  Professional   Professional @relation(fields: [professionalId], references: [id])
+  User           User         @relation(fields: [userId], references: [id])
 }
 
 model Location {
-  id          Int       @id @default(autoincrement())
-  city        String    
-  province    String    @default("")
-  country     String    @default("Argentina")
-  postalCode  String    @default("")
-  latitude    Float?
-  longitude   Float?
+  id            Int            @id @default(autoincrement())
+  city          String
+  country       String         @default("Argentina")
+  postalCode    String         @default("")
+  province      String         @default("")
+  latitude      Float?
+  longitude     Float?
   professionals Professional[]
 }
-
-// Nuevos modelos para las funcionalidades avanzadas
 
 model PortfolioImage {
   id             Int          @id @default(autoincrement())
@@ -171,356 +169,340 @@ model UrgentBooking {
   id             Int          @id @default(autoincrement())
   userId         Int
   professionalId Int
-  timeframe      String       // "now", "2hours", "today", "tomorrow"
+  timeframe      String
   description    String?
-  surchargeRate  Float        // 0.25 = +25%
+  surchargeRate  Float
   estimatedPrice Float?
-  status         String       @default("pending") // "pending", "confirmed", "cancelled"
+  status         String       @default("pending")
   createdAt      DateTime     @default(now())
-  updatedAt      DateTime     @updatedAt @default(now())
-  User           User         @relation(fields: [userId], references: [id])
+  updatedAt      DateTime     @default(now()) @updatedAt
   Professional   Professional @relation(fields: [professionalId], references: [id])
+  User           User         @relation(fields: [userId], references: [id])
 }
 
 model Availability {
   id             Int          @id @default(autoincrement())
   professionalId Int
-  dayOfWeek      Int          // 0=domingo, 1=lunes, etc.
-  startTime      String       // "09:00"
-  endTime        String       // "18:00"
+  dayOfWeek      Int
+  startTime      String
+  endTime        String
   isAvailable    Boolean      @default(true)
   Professional   Professional @relation(fields: [professionalId], references: [id])
 }
 
 model SearchSuggestion {
-  id           Int      @id @default(autoincrement())
-  categoryId   Int
-  text         String
-  icon         String?
-  estimatedTime String? // "2-3 horas"
-  avgPrice     String?  // "$15000"
-  isUrgent     Boolean  @default(false)
-  popularity   Int      @default(0)
-  Category     Category @relation(fields: [categoryId], references: [id])
+  id            Int      @id @default(autoincrement())
+  categoryId    Int
+  text          String
+  icon          String?
+  estimatedTime String?
+  avgPrice      String?
+  isUrgent      Boolean  @default(false)
+  popularity    Int      @default(0)
+  Category      Category @relation(fields: [categoryId], references: [id])
 }
 
 model VerificationRequest {
   id             Int          @id @default(autoincrement())
   professionalId Int
-  documentType   String       // "dni", "passport", "cuil"
+  documentType   String
   documentNumber String
-  workLicense    String?      // Matrícula profesional
-  certifications Json?        // Array de certificaciones
-  experience     String?      // Descripción de experiencia
-  references     Json?        // Array de referencias
-  status         String       @default("pending") // "pending", "under_review", "approved", "rejected"
-  reviewedBy     String?      // Admin que revisó
+  workLicense    String?
+  certifications Json?
+  experience     String?
+  references     Json?
+  status         String       @default("pending")
+  reviewedBy     String?
   reviewNotes    String?
   createdAt      DateTime     @default(now())
-  updatedAt      DateTime     @updatedAt @default(now())
+  updatedAt      DateTime     @default(now()) @updatedAt
   Professional   Professional @relation(fields: [professionalId], references: [id])
 }
 
-// Nuevos modelos para certificaciones y especialidades
 model Certification {
   id             Int          @id @default(autoincrement())
   professionalId Int
-  name           String       // "Matrícula Provincial", "Seguridad Eléctrica"
-  type           String       // "license", "certificate", "training"
-  issuer         String?      // Entidad emisora
+  name           String
+  type           String
+  issuer         String?
   issueDate      DateTime?
   expiryDate     DateTime?
-  certificateUrl String?      // URL del certificado
+  certificateUrl String?
   isVerified     Boolean      @default(false)
   createdAt      DateTime     @default(now())
   Professional   Professional @relation(fields: [professionalId], references: [id])
 }
 
 model Specialty {
-  id          Int        @id @default(autoincrement())
-  name        String     @unique // "Instalaciones eléctricas", "Sistemas LED"
-  categoryId  Int?       // Opcional: relación con categoría
-  description String?
-  icon        String?    // Emoji o ícono
-  Category    Category?  @relation(fields: [categoryId], references: [id])
+  id            Int                     @id @default(autoincrement())
+  name          String                  @unique
+  categoryId    Int?
+  description   String?
+  icon          String?
   Professionals ProfessionalSpecialty[]
+  Category      Category?               @relation(fields: [categoryId], references: [id])
 }
 
 model ProfessionalSpecialty {
-  id             Int          @id @default(autoincrement())
-  professionalId Int
-  specialtyId    Int
-  yearsExperience Int?        // Años de experiencia en esta especialidad
-  isMain         Boolean      @default(false) // Es especialidad principal
-  Professional   Professional @relation(fields: [professionalId], references: [id])
-  Specialty      Specialty    @relation(fields: [specialtyId], references: [id])
-  
+  id              Int          @id @default(autoincrement())
+  professionalId  Int
+  specialtyId     Int
+  yearsExperience Int?
+  isMain          Boolean      @default(false)
+  Professional    Professional @relation(fields: [professionalId], references: [id])
+  Specialty       Specialty    @relation(fields: [specialtyId], references: [id])
+
   @@unique([professionalId, specialtyId])
 }
 
-// Subscription Plans Models
 model SubscriptionPlan {
-  id              String        @id // "free", "premium", "pro"
-  name            String        // "Plan Gratuito", "Plan Premium", "Plan Profesional"
-  description     String        // Descripción del plan
-  price           Float         // Precio mensual
-  yearlyPrice     Float?        // Precio anual (con descuento)
-  monthlyLeadLimit Int          // Límite mensual de contactos
-  isPriority      Boolean       @default(false) // Aparece primero en búsquedas
-  isFeatured      Boolean       @default(false) // Destacado con badge
-  customBadge     String?       // Badge personalizado
-  features        Json          // Array de características
-  isActive        Boolean       @default(true)
-  createdAt       DateTime      @default(now())
-  updatedAt       DateTime      @updatedAt @default(now())
-  Subscriptions   Subscription[]
+  id               String         @id
+  name             String
+  description      String
+  price            Float
+  yearlyPrice      Float?
+  monthlyLeadLimit Int
+  isPriority       Boolean        @default(false)
+  isFeatured       Boolean        @default(false)
+  customBadge      String?
+  features         Json
+  isActive         Boolean        @default(true)
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @default(now()) @updatedAt
+  Subscriptions    Subscription[]
 }
 
 model Subscription {
-  id              Int            @id @default(autoincrement())
-  professionalId  Int
-  planId          String         // Reference to SubscriptionPlan.id
-  status          String         // "active", "expired", "cancelled", "pending_payment"
-  startDate       DateTime       @default(now())
-  expiresAt       DateTime?
-  autoRenew       Boolean        @default(true)
-  paymentMethod   String?        // "mercadopago", "stripe", etc.
-  externalId      String?        // ID del pago en el proveedor
-  createdAt       DateTime       @default(now())
-  updatedAt       DateTime       @updatedAt @default(now())
-  Professional    Professional   @relation(fields: [professionalId], references: [id])
-  Plan            SubscriptionPlan @relation(fields: [planId], references: [id])
-  Payments        Payment[]
-}
-
-// Sistema de pagos unificado
-model Payment {
-  id             Int          @id @default(autoincrement())
-  type           String       // "subscription", "service", "commission"
-  amount         Float
-  currency       String       @default("ARS")
-  status         String       // "pending", "approved", "rejected", "cancelled", "refunded"
-  paymentMethod  String       // "mercadopago", "stripe", "cash", "transfer"
-  externalId     String?      // ID del pago en el proveedor
-  externalData   Json?        // Datos adicionales del proveedor
-  description    String?      // Descripción del pago
-  // Relaciones opcionales según tipo de pago
-  subscriptionId Int?
-  servicePaymentId Int?
-  commissionId   Int?
-  // Metadatos financieros
-  platformFee    Float?       // Comisión de la plataforma
-  processingFee  Float?       // Costo de procesamiento
-  netAmount      Float?       // Monto neto para el profesional
-  paidAt         DateTime?
-  createdAt      DateTime     @default(now())
-  updatedAt      DateTime     @updatedAt @default(now())
-  // Relaciones
-  Subscription   Subscription? @relation(fields: [subscriptionId], references: [id])
-  ServicePayment ServicePayment? @relation(fields: [servicePaymentId], references: [id])
-  Commission     Commission?  @relation(fields: [commissionId], references: [id])
-}
-
-// Pagos específicos de servicios
-model ServicePayment {
-  id             Int          @id @default(autoincrement())
-  bookingId      Int
-  clientUserId   Int          // Usuario que paga
-  professionalId Int          // Profesional que recibe
-  amount         Float        // Monto total
-  platformFee    Float        @default(0) // Comisión de la plataforma
-  professionalAmount Float    // Monto que recibe el profesional
-  status         String       @default("pending") // "pending", "paid", "partial", "refunded"
-  paymentMethod  String?      // "mercadopago", "stripe", "cash"
-  isAdvancePayment Boolean    @default(false) // Si es un adelanto
-  advancePercentage Float?    // Porcentaje de adelanto (0.3 = 30%)
-  createdAt      DateTime     @default(now())
-  updatedAt      DateTime     @updatedAt @default(now())
-  Booking        Booking      @relation(fields: [bookingId], references: [id])
-  ClientUser     User         @relation("ClientPayments", fields: [clientUserId], references: [id])
-  Professional   Professional @relation("ProfessionalPayments", fields: [professionalId], references: [id])
-  Payments       Payment[]
-}
-
-// Comisiones y fees de la plataforma
-model Commission {
-  id             Int          @id @default(autoincrement())
+  id             Int              @id @default(autoincrement())
   professionalId Int
-  servicePaymentId Int?
-  subscriptionId Int?
-  type           String       // "service_fee", "subscription_fee", "transaction_fee"
-  baseAmount     Float        // Monto base sobre el que se calcula
-  percentage     Float        // Porcentaje de comisión (0.05 = 5%)
-  amount         Float        // Monto de la comisión
-  status         String       @default("pending") // "pending", "collected", "waived"
-  collectedAt    DateTime?
-  createdAt      DateTime     @default(now())
-  updatedAt      DateTime     @updatedAt @default(now())
-  Professional   Professional @relation(fields: [professionalId], references: [id])
+  planId         String
+  status         String
+  startDate      DateTime         @default(now())
+  expiresAt      DateTime?
+  autoRenew      Boolean          @default(true)
+  paymentMethod  String?
+  externalId     String?
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @default(now()) @updatedAt
   Payments       Payment[]
+  Plan           SubscriptionPlan @relation(fields: [planId], references: [id])
+  Professional   Professional     @relation(fields: [professionalId], references: [id])
 }
 
-// Configuración de comisiones
+model Payment {
+  id               Int             @id @default(autoincrement())
+  type             String
+  amount           Float
+  currency         String          @default("ARS")
+  status           String
+  paymentMethod    String
+  externalId       String?
+  externalData     Json?
+  description      String?
+  subscriptionId   Int?
+  servicePaymentId Int?
+  commissionId     Int?
+  platformFee      Float?
+  processingFee    Float?
+  netAmount        Float?
+  paidAt           DateTime?
+  createdAt        DateTime        @default(now())
+  updatedAt        DateTime        @default(now()) @updatedAt
+  Commission       Commission?     @relation(fields: [commissionId], references: [id])
+  ServicePayment   ServicePayment? @relation(fields: [servicePaymentId], references: [id])
+  Subscription     Subscription?   @relation(fields: [subscriptionId], references: [id])
+}
+
+model ServicePayment {
+  id                 Int          @id @default(autoincrement())
+  bookingId          Int
+  clientUserId       Int
+  professionalId     Int
+  amount             Float
+  platformFee        Float        @default(0)
+  professionalAmount Float
+  status             String       @default("pending")
+  paymentMethod      String?
+  isAdvancePayment   Boolean      @default(false)
+  advancePercentage  Float?
+  createdAt          DateTime     @default(now())
+  updatedAt          DateTime     @default(now()) @updatedAt
+  Payments           Payment[]
+  Booking            Booking      @relation(fields: [bookingId], references: [id])
+  ClientUser         User         @relation("ClientPayments", fields: [clientUserId], references: [id])
+  Professional       Professional @relation("ProfessionalPayments", fields: [professionalId], references: [id])
+}
+
+model Commission {
+  id               Int          @id @default(autoincrement())
+  professionalId   Int
+  servicePaymentId Int?
+  subscriptionId   Int?
+  type             String
+  baseAmount       Float
+  percentage       Float
+  amount           Float
+  status           String       @default("pending")
+  collectedAt      DateTime?
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @default(now()) @updatedAt
+  Professional     Professional @relation(fields: [professionalId], references: [id])
+  Payments         Payment[]
+}
+
 model CommissionConfig {
-  id                    Int      @id @default(autoincrement())
-  serviceFeePercentage  Float    @default(0.05) // 5% por defecto
-  subscriptionFeePercentage Float @default(0.0)  // Sin comisión en suscripciones por defecto
-  processingFeePercentage Float  @default(0.029) // ~3% fee de procesamiento MercadoPago
-  minCommission         Float    @default(100)   // Comisión mínima en ARS
-  maxCommission         Float?   // Comisión máxima (opcional)
-  isActive              Boolean  @default(true)
-  createdAt             DateTime @default(now())
-  updatedAt             DateTime @updatedAt @default(now())
+  id                        Int      @id @default(autoincrement())
+  serviceFeePercentage      Float    @default(0.05)
+  subscriptionFeePercentage Float    @default(0.0)
+  processingFeePercentage   Float    @default(0.029)
+  minCommission             Float    @default(100)
+  maxCommission             Float?
+  isActive                  Boolean  @default(true)
+  createdAt                 DateTime @default(now())
+  updatedAt                 DateTime @default(now()) @updatedAt
 }
 
-// Notificaciones del sistema de pagos
 model PaymentNotification {
-  id         Int      @id @default(autoincrement())
-  type       String   // "payment_received", "payment_failed", "commission_charged", etc.
-  userId     Int?     // Usuario objetivo (puede ser null para notificaciones del admin)
-  title      String   // Título de la notificación
-  message    String   // Mensaje detallado
-  data       Json?    // Datos adicionales (IDs, montos, etc.)
-  isRead     Boolean  @default(false)
-  priority   String   @default("normal") // "low", "normal", "high", "urgent"
-  createdAt  DateTime @default(now())
-  readAt     DateTime?
-  User       User?    @relation("PaymentNotifications", fields: [userId], references: [id])
+  id        Int       @id @default(autoincrement())
+  type      String
+  userId    Int?
+  title     String
+  message   String
+  data      Json?
+  isRead    Boolean   @default(false)
+  priority  String    @default("normal")
+  createdAt DateTime  @default(now())
+  readAt    DateTime?
+  User      User?     @relation("PaymentNotifications", fields: [userId], references: [id])
 }
 
 model LeadContact {
-  id             Int          @id @default(autoincrement())
-  professionalId Int
-  clientUserId   Int?         // Usuario que contactó (puede ser null si es anónimo)
-  clientName     String?      // Nombre del cliente
-  clientPhone    String?      // Teléfono del cliente
-  clientEmail    String?      // Email del cliente
-  message        String?      // Mensaje del cliente
-  serviceRequested String?    // Servicio solicitado
-  contactMethod  String       // "whatsapp", "phone", "email", "form"
-  isUrgent       Boolean      @default(false)
-  status         String       @default("new") // "new", "contacted", "converted", "lost"
-  createdAt      DateTime     @default(now())
-  updatedAt      DateTime     @updatedAt @default(now())
-  Professional   Professional @relation(fields: [professionalId], references: [id])
+  id               Int          @id @default(autoincrement())
+  professionalId   Int
+  clientUserId     Int?
+  clientName       String?
+  clientPhone      String?
+  clientEmail      String?
+  message          String?
+  serviceRequested String?
+  contactMethod    String
+  isUrgent         Boolean      @default(false)
+  status           String       @default("new")
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @default(now()) @updatedAt
+  Professional     Professional @relation(fields: [professionalId], references: [id])
 }
 
-// Feature Flags System
 model FeatureFlag {
-  id          String   @id // "ai_search", "urgent_booking", etc.
-  name        String   // "Búsqueda IA", "Reservas Urgentes", etc.
-  description String?  // Descripción detallada
+  id          String   @id @unique
+  name        String
+  description String?
   isEnabled   Boolean  @default(false)
-  category    String   @default("general") // "search", "booking", "professional", etc.
-  configData  Json?    // Configuración adicional específica del feature
+  category    String   @default("general")
+  configData  Json?
   createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt @default(now())
-
-  @@unique([id])
+  updatedAt   DateTime @default(now()) @updatedAt
 }
 
-// Content Management System
 model Content {
-  id          String   @id // "hero_title", "how_it_works_text", "cta_button", etc.
-  key         String   @unique @map("content_key_unique") // Clave única para identificar el contenido
-  name        String   // Nombre descriptivo para el admin
-  value       String   // Contenido actual
-  defaultValue String  // Valor por defecto
-  description String?  // Descripción del contenido para el admin
-  type        String   @default("text") // "text", "html", "url", "number", "boolean", "json"
-  category    String   @default("general") // "hero", "footer", "announcements", "buttons", etc.
-  isActive    Boolean  @default(true)
-  metadata    Json?    // Metadatos adicionales (color, tamaño, etc.)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt @default(now())
-  updatedBy   String?  // Usuario admin que actualizó
+  id           String   @id
+  key          String   @unique @map("content_key_unique")
+  name         String
+  value        String
+  defaultValue String
+  description  String?
+  type         String   @default("text")
+  category     String   @default("general")
+  isActive     Boolean  @default(true)
+  metadata     Json?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @default(now()) @updatedAt
+  updatedBy    String?
 }
 
-// Announcements/Banners System
 model Announcement {
-  id          Int      @id @default(autoincrement())
-  title       String   // Título del anuncio
-  message     String   // Mensaje del anuncio
-  type        String   @default("info") // "info", "warning", "success", "error", "promotion"
-  isActive    Boolean  @default(true)
-  startDate   DateTime @default(now())
-  endDate     DateTime? // Fecha de expiración (opcional)
-  targetUsers String   @default("all") // "all", "customers", "professionals", "admins"
-  priority    Int      @default(0) // Orden de aparición
-  actionUrl   String?  // URL de acción (opcional)
-  actionText  String?  // Texto del botón de acción
-  iconUrl     String?  // URL del ícono
-  backgroundColor String? // Color de fondo personalizado
-  textColor   String?  // Color de texto personalizado
-  showOnPages Json?    // Array de páginas donde mostrar ["home", "search", "profile"]
-  impressions Int      @default(0) // Contador de visualizaciones
-  clicks      Int      @default(0) // Contador de clics
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt @default(now())
-  createdBy   String?  // Admin que creó
+  id              Int       @id @default(autoincrement())
+  title           String
+  message         String
+  type            String    @default("info")
+  isActive        Boolean   @default(true)
+  startDate       DateTime  @default(now())
+  endDate         DateTime?
+  targetUsers     String    @default("all")
+  priority        Int       @default(0)
+  actionUrl       String?
+  actionText      String?
+  iconUrl         String?
+  backgroundColor String?
+  textColor       String?
+  showOnPages     Json?
+  impressions     Int       @default(0)
+  clicks          Int       @default(0)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @default(now()) @updatedAt
+  createdBy       String?
 }
 
-// Analytics System
 model AnalyticsEvent {
-  id          Int      @id @default(autoincrement())
-  eventType   String   // "user_registration", "search", "professional_contact", "booking_created", etc.
-  category    String   // "user", "professional", "search", "booking", "payment", "system"
-  action      String   // "create", "update", "delete", "view", "click", "search", "contact"
-  label       String?  // Additional context or label
-  value       Float?   // Numeric value if applicable
-  userId      Int?     // User who performed the action (nullable for anonymous)
-  professionalId Int? // Professional involved (if applicable)
-  bookingId   Int?     // Booking involved (if applicable)
-  sessionId   String?  // Session identifier
-  ipAddress   String?  // IP address for geolocation
-  userAgent   String?  // Browser/device info
-  referrer    String?  // Where user came from
-  metadata    Json?    // Additional event data (search terms, filters, etc.)
-  timestamp   DateTime @default(now())
-  createdAt   DateTime @default(now())
+  id             Int      @id @default(autoincrement())
+  eventType      String
+  category       String
+  action         String
+  label          String?
+  value          Float?
+  userId         Int?
+  professionalId Int?
+  bookingId      Int?
+  sessionId      String?
+  ipAddress      String?
+  userAgent      String?
+  referrer       String?
+  metadata       Json?
+  timestamp      DateTime @default(now())
+  createdAt      DateTime @default(now())
 }
 
 model AnalyticsDashboard {
-  id              Int      @id @default(autoincrement())
-  date            DateTime @unique @db.Date // Daily aggregated data
-  totalUsers      Int      @default(0)
-  newUsers        Int      @default(0)
-  totalProfessionals Int   @default(0)
-  newProfessionals Int     @default(0)
-  totalBookings   Int      @default(0)
-  newBookings     Int      @default(0)
-  totalRevenue    Float    @default(0)
-  newRevenue      Float    @default(0)
-  searchQueries   Int      @default(0)
-  professionalContacts Int @default(0)
-  userRegistrations Int    @default(0)
-  professionalRegistrations Int @default(0)
-  avgBookingValue Float    @default(0)
-  conversionRate  Float    @default(0)
-  bounceRate      Float    @default(0)
-  avgSessionDuration Int   @default(0) // in seconds
-  topSearchTerms  Json?    // Array of top search terms with counts
-  topCategories   Json?    // Array of most popular categories
-  deviceStats     Json?    // Desktop vs mobile usage
-  locationStats   Json?    // Geographic distribution
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt @default(now())
+  id                        Int      @id @default(autoincrement())
+  date                      DateTime @unique @db.Date
+  totalUsers                Int      @default(0)
+  newUsers                  Int      @default(0)
+  totalProfessionals        Int      @default(0)
+  newProfessionals          Int      @default(0)
+  totalBookings             Int      @default(0)
+  newBookings               Int      @default(0)
+  totalRevenue              Float    @default(0)
+  newRevenue                Float    @default(0)
+  searchQueries             Int      @default(0)
+  professionalContacts      Int      @default(0)
+  userRegistrations         Int      @default(0)
+  professionalRegistrations Int      @default(0)
+  avgBookingValue           Float    @default(0)
+  conversionRate            Float    @default(0)
+  bounceRate                Float    @default(0)
+  avgSessionDuration        Int      @default(0)
+  topSearchTerms            Json?
+  topCategories             Json?
+  deviceStats               Json?
+  locationStats             Json?
+  createdAt                 DateTime @default(now())
+  updatedAt                 DateTime @default(now()) @updatedAt
 }
 
 model AnalyticsUserActivity {
-  id              Int      @id @default(autoincrement())
-  userId          Int
-  date            DateTime @db.Date
-  pageViews       Int      @default(0)
-  sessionDuration Int      @default(0) // in seconds
-  searches        Int      @default(0)
-  bookingsCreated Int      @default(0)
-  professionalsContacted Int @default(0)
-  lastActivity    DateTime @default(now())
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt @default(now())
-  User            User     @relation(fields: [userId], references: [id])
-  
+  id                     Int      @id @default(autoincrement())
+  userId                 Int
+  date                   DateTime @db.Date
+  pageViews              Int      @default(0)
+  sessionDuration        Int      @default(0)
+  searches               Int      @default(0)
+  bookingsCreated        Int      @default(0)
+  professionalsContacted Int      @default(0)
+  lastActivity           DateTime @default(now())
+  createdAt              DateTime @default(now())
+  updatedAt              DateTime @default(now()) @updatedAt
+  User                   User     @relation(fields: [userId], references: [id])
+
   @@unique([userId, date])
 }
 
@@ -530,12 +512,12 @@ model AnalyticsSearchMetrics {
   searchTerm   String
   category     String?
   resultCount  Int      @default(0)
-  clickThrough Int      @default(0) // How many clicked on results
-  conversions  Int      @default(0) // How many made contact/booking
-  avgPosition  Float?   // Average position of clicked results
-  metadata     Json?    // Filters used, location, etc.
+  clickThrough Int      @default(0)
+  conversions  Int      @default(0)
+  avgPosition  Float?
+  metadata     Json?
   createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt @default(now())
-  
+  updatedAt    DateTime @default(now()) @updatedAt
+
   @@unique([date, searchTerm])
 }

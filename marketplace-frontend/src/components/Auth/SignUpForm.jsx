@@ -22,10 +22,10 @@ import { initialValues, validationSchema } from "../../config/forms/signUpForm";
 import { getText } from "../../config/texts/texts";
 import useAuth from "../../hooks/context/useAuth";
 import { ChevronLeftIcon, EyeCloseIcon, EyeIcon } from "../../icons";
-import { InputField as Input } from "../base";
+import { Input } from "../atoms/Input/Input";
 import CustomSelect from "../Select/CustomSelect";
 import Checkbox from "../template/form/input/Checkbox";
-import Button from "../template/ui/button/Button";
+import { Button } from "../atoms/Button/Button";
 
 export default function SignUpForm() {
   const authContext = useAuth();
@@ -33,6 +33,7 @@ export default function SignUpForm() {
 
   const [showPassword, setShowPassword] = useState(false);
   const [isChecked, setIsChecked] = useState(false);
+  const [generalError, setGeneralError] = useState("");
 
   const options = [
     {
@@ -83,31 +84,28 @@ export default function SignUpForm() {
   const formik = useFormik({
     initialValues,
     validationSchema,
-    onSubmit: async (values, { setSubmitting, setErrors }) => {
+    onSubmit: async (values, { setSubmitting }) => {
       try {
+        setGeneralError("");
         delete values.confirmPassword;
         await authContext.register(values);
 
         // Check if professional needs onboarding
         const requiresOnboarding = localStorage.getItem("requiresOnboarding");
 
-        if (values.role === "professional") {
-          if (requiresOnboarding) {
-            localStorage.removeItem("requiresOnboarding");
-            navigate("/professional-onboarding", {
-              state: { userData: authContext.user },
-            });
-          } else {
-            // Professional registered successfully, go to professional dashboard
-            navigate("/professional-dashboard");
-          }
-        } else if (values.role === "customer") {
+        // Use the role from the registered user data or fallback to form value
+        const userRole = authContext.user?.role || values.role;
+
+        if (userRole === "professional") {
+          // Go directly to professional dashboard - backend will handle onboarding status
+          navigate("/professional-dashboard");
+        } else if (userRole === "customer") {
           navigate("/customer-dashboard");
         } else {
           navigate("/");
         }
       } catch (error) {
-        setErrors({ password: error.message || "Error de autenticación" });
+        setGeneralError(error.message || "Error de autenticación");
       } finally {
         setSubmitting(false);
       }
@@ -329,8 +327,8 @@ export default function SignUpForm() {
                   value={formik.values.name}
                   onChange={formik.handleChange}
                   error={formik.touched.name && formik.errors.name}
-                  hint={formik.touched.name && formik.errors.name}
-                  leftIcon={User}
+                  helperText={formik.touched.name && formik.errors.name}
+                  leftIcon={<User size={18} />}
                   required
                 />
                 <Input
@@ -342,8 +340,8 @@ export default function SignUpForm() {
                   value={formik.values.lastName}
                   onChange={formik.handleChange}
                   error={formik.touched.lastName && formik.errors.lastName}
-                  hint={formik.touched.lastName && formik.errors.lastName}
-                  leftIcon={User}
+                  helperText={formik.touched.lastName && formik.errors.lastName}
+                  leftIcon={<User size={18} />}
                   required
                 />
               </div>
@@ -358,8 +356,8 @@ export default function SignUpForm() {
                 value={formik.values.email}
                 onChange={formik.handleChange}
                 error={formik.touched.email && formik.errors.email}
-                hint={formik.touched.email && formik.errors.email}
-                leftIcon={Mail}
+                helperText={formik.touched.email && formik.errors.email}
+                leftIcon={<Mail size={18} />}
                 required
               />
 
@@ -373,8 +371,8 @@ export default function SignUpForm() {
                 value={formik.values.phone}
                 onChange={formik.handleChange}
                 error={formik.touched.phone && formik.errors.phone}
-                hint={formik.touched.phone && formik.errors.phone}
-                leftIcon={Phone}
+                helperText={formik.touched.phone && formik.errors.phone}
+                leftIcon={<Phone size={18} />}
                 required
               />
 
@@ -385,7 +383,7 @@ export default function SignUpForm() {
                 label={getText("whoYouAre")}
                 placeholder="Selecciona tu tipo de cuenta"
                 options={options}
-                leftIcon={UserCheck}
+                leftIcon={<UserCheck size={18} />}
                 value={
                   options.find((op) => op.value === formik.values.role) ?? null
                 }
@@ -394,7 +392,7 @@ export default function SignUpForm() {
                   formik.setFieldTouched("role", true);
                 }}
                 error={formik.touched.role && formik.errors.role}
-                hint={formik.touched.role && formik.errors.role}
+                helperText={formik.touched.role && formik.errors.role}
               />
 
               {/* Passwords */}
@@ -408,9 +406,9 @@ export default function SignUpForm() {
                   value={formik.values.password}
                   onChange={formik.handleChange}
                   error={formik.touched.password && formik.errors.password}
-                  hint={formik.touched.password && formik.errors.password}
-                  leftIcon={Lock}
-                  rightIcon={showPassword ? EyeIcon : EyeCloseIcon}
+                  helperText={formik.touched.password && formik.errors.password}
+                  leftIcon={<Lock size={18} />}
+                  rightIcon={showPassword ? <EyeIcon size={18} /> : <EyeCloseIcon size={18} />}
                   onRightIconClick={() => setShowPassword(!showPassword)}
                   required
                 />
@@ -427,11 +425,11 @@ export default function SignUpForm() {
                     formik.touched.confirmPassword &&
                     formik.errors.confirmPassword
                   }
-                  hint={
+                  helperText={
                     formik.touched.confirmPassword &&
                     formik.errors.confirmPassword
                   }
-                  leftIcon={Lock}
+                  leftIcon={<Lock size={18} />}
                   required
                 />
               </div>
@@ -485,6 +483,13 @@ export default function SignUpForm() {
                   )}
                 </span>
               </Button>
+
+              {/* General Error Message */}
+              {generalError && (
+                <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl text-sm font-medium text-center">
+                  {generalError}
+                </div>
+              )}
 
               {/* Benefits below button */}
               <div className="text-center space-y-2">

@@ -1,5 +1,6 @@
 // src/routes/routeConfig.ts
 import { JSX } from "react";
+import { Navigate } from "react-router";
 
 import AISearch from "../components/AISearch/AISearch";
 import PublicLayout from "../layout/PublicLayout";
@@ -10,12 +11,15 @@ import SignIn from "../pages/AuthPages/SignIn";
 import SignUp from "../pages/AuthPages/SignUp";
 import CustomerDashboard from "../pages/CustomerDashboard/CustomerDashboard";
 import HomeCustomer from "../pages/HomeCustomer/HomeCustomer";
+import PrivacyPolicy from "../pages/Legal/PrivacyPolicy";
+import TermsAndConditions from "../pages/Legal/TermsAndConditions";
 import PaymentFailure from "../pages/Payment/PaymentFailure";
 import PaymentSuccess from "../pages/Payment/PaymentSuccess";
+import SubscriptionFailure from "../pages/Payment/SubscriptionFailure";
+import SubscriptionSuccess from "../pages/Payment/SubscriptionSuccess";
 import ProfessionalDashboard from "../pages/ProfessionalDashboard/ProfessionalDashboard";
 import ProfessionalProfileEdit from "../pages/ProfessionalDashboard/ProfessionalProfileEdit";
 import ProfessionalLanding from "../pages/ProfessionalLanding/ProfessionalLanding";
-import ProfessionalOnboarding from "../pages/ProfessionalOnboarding/ProfessionalOnboarding";
 import ProfessionalProfile from "../pages/ProfessionalProfile/ProfessionalProfile";
 import SearchProfessional from "../pages/SearchProfessional/SearchProfessional";
 import Calendar from "../pages/template/Calendar";
@@ -46,6 +50,8 @@ export const routes: RouteConfig[] = [
   { path: "/signin", element: <SignIn />, public: true },
   { path: "/signup", element: <SignUp />, public: true },
   { path: "/admin-login", element: <AdminLogin />, public: true },
+  { path: "/terms", element: <TermsAndConditions />, public: true },
+  { path: "/privacy", element: <PrivacyPolicy />, public: true },
 
   // rutas protegidas sin restricción de rol
   {
@@ -95,8 +101,12 @@ export const routes: RouteConfig[] = [
     roles: ["admin"],
   },
 
-  // Professional onboarding (authenticated but no role restriction)
-  { path: "/professional-onboarding", element: <ProfessionalOnboarding /> },
+  // Professional onboarding - redirect to dashboard (onboarding is now modal)
+  {
+    path: "/professional-onboarding",
+    element: <Navigate to="/professional-dashboard" replace />,
+    roles: ["professional"],
+  },
 
   // Payment result pages (public access)
   {
@@ -110,6 +120,18 @@ export const routes: RouteConfig[] = [
     element: <PaymentFailure />,
     layout: <PublicLayout />,
     public: true,
+  },
+  {
+    path: "/subscription/success",
+    element: <SubscriptionSuccess />,
+    layout: <PublicLayout />,
+    roles: ["professional"],
+  },
+  {
+    path: "/subscription/failure",
+    element: <SubscriptionFailure />,
+    layout: <PublicLayout />,
+    roles: ["professional"],
   },
 
   // Unified Dashboard Routes

@@ -14,7 +14,7 @@ import {
   ExternalLink
 } from "lucide-react";
 import { useState } from "react";
-import { InputField as Input } from "../../../components/base";
+import { Input } from "../../../components/atoms/Input/Input";
 import Label from "../../../components/template/form/Label";
 import Button from "../../../components/template/ui/button/Button";
 import { Modal } from "../../../components/template/ui/modal";
@@ -49,7 +49,6 @@ const InfoCard = (props) => {
   };
 
   const handleSave = () => {
-    console.log("Saving changes...");
     closeModal();
   };
 

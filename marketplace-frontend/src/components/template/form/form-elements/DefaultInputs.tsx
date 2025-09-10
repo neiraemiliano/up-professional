@@ -1,7 +1,7 @@
 import { useState } from "react";
 import ComponentCard from "../../common/ComponentCard";
 import Label from "../Label";
-import Input from "../input/InputField";
+import { Input } from "../../../atoms/Input/Input";
 import Select from "../Select";
 import { EyeCloseIcon, EyeIcon, TimeIcon } from "../../../../icons";
 import DatePicker from "../date-picker";
@@ -14,7 +14,7 @@ export default function DefaultInputs() {
     { value: "development", name: "Development" },
   ];
   const handleSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    console.log("Selected value:", e.target.value);
+    // Handle select change
   };
 
   return (
@@ -64,7 +64,6 @@ export default function DefaultInputs() {
             placeholder="Select a date"
             onChange={(dates, currentDateString) => {
               // Handle your logic
-              console.log({ dates, currentDateString });
             }}
           />
         </div>
@@ -76,7 +75,9 @@ export default function DefaultInputs() {
               type="time"
               id="tm"
               name="tm"
-              onChange={(e) => console.log(e.target.value)}
+              onChange={(e) => {
+                // Handle time change
+              }}
             />
             <span className="absolute text-gray-500 -translate-y-1/2 pointer-events-none right-3 top-1/2 dark:text-gray-400">
               <TimeIcon className="size-6" />

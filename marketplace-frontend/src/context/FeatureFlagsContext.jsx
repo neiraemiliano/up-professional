@@ -10,12 +10,9 @@ export const FeatureFlagsProvider = ({ children }) => {
     error 
   } = useEnabledFeaturesMap();
 
-  console.log('FeatureFlagsProvider - featureFlags:', featureFlags);
-  console.log('FeatureFlagsProvider - isLoading:', isLoading);
 
   // Feature flags helper
   const isFeatureEnabled = (flagId) => {
-    console.log(`Checking feature ${flagId}:`, featureFlags?.[flagId]);
     if (isLoading || !featureFlags) return false;
     return Boolean(featureFlags[flagId]);
   };

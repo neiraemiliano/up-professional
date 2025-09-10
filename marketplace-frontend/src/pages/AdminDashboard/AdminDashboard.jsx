@@ -30,7 +30,7 @@ import {
   X,
   Zap,
 } from "lucide-react";
-import { useState } from "react";
+import { useState, memo, useMemo, useCallback, useReducer } from "react";
 
 import {
   useBookingMetrics,
@@ -55,7 +55,7 @@ import PaymentMetrics from "../../components/Admin/PaymentMetrics";
 import ErrorMessage from "../../components/ErrorMessage/ErrorMessage";
 import LoadingSpinner from "../../components/LoadingSpinner/LoadingSpinner";
 import PaymentNotifications from "../../components/Notifications/PaymentNotifications";
-import Button from "../../components/template/ui/button/Button";
+import { Button } from "../../components/atoms/Button/Button";
 import ActivityLog from "./components/ActivityLog";
 import AnalyticsTab from "./components/AnalyticsTab";
 import AnnouncementManagement from "./components/AnnouncementManagement";
@@ -66,24 +66,85 @@ import ProfessionalsManagement from "./components/ProfessionalsManagement";
 import StatsCard from "./components/StatsCard";
 import UsersManagement from "./components/UsersManagement";
 
-const AdminDashboard = () => {
-  const [selectedPeriod, setSelectedPeriod] = useState("30d");
-  const [activeTab, setActiveTab] = useState("overview");
-  const [showCreateModal, setShowCreateModal] = useState(false);
-  const [editingFlag, setEditingFlag] = useState(null);
-  const [showNotification, setShowNotification] = useState(false);
-  const [notification, setNotification] = useState({
-    type: "success", // success, error
-    title: "",
-    message: ""
-  });
-  const [formData, setFormData] = useState({
+// Modal and Form State Reducer - Enterprise pattern for complex state management
+const modalFormReducer = (state, action) => {
+  switch (action.type) {
+    case "OPEN_CREATE_MODAL":
+      return {
+        ...state,
+        showCreateModal: true,
+        editingFlag: null,
+        formData: {
+          id: "",
+          name: "",
+          description: "",
+          category: "general",
+          isEnabled: false,
+        },
+      };
+    case "OPEN_EDIT_MODAL":
+      return {
+        ...state,
+        showCreateModal: true,
+        editingFlag: action.payload.flag,
+        formData: {
+          id: action.payload.flag.id,
+          name: action.payload.flag.name,
+          description: action.payload.flag.description || "",
+          category: action.payload.flag.category || "general",
+          isEnabled: action.payload.flag.isEnabled,
+        },
+      };
+    case "CLOSE_MODAL":
+      return {
+        ...state,
+        showCreateModal: false,
+        editingFlag: null,
+      };
+    case "UPDATE_FORM_DATA":
+      return {
+        ...state,
+        formData: {
+          ...state.formData,
+          ...action.payload,
+        },
+      };
+    default:
+      return state;
+  }
+};
+
+const initialModalFormState = {
+  showCreateModal: false,
+  editingFlag: null,
+  formData: {
     id: "",
     name: "",
     description: "",
     category: "general",
     isEnabled: false,
+  },
+};
+
+const AdminDashboard = () => {
+  // Simple UI state - kept as useState (best practice)
+  const [selectedPeriod, setSelectedPeriod] = useState("30d");
+  const [activeTab, setActiveTab] = useState("overview");
+
+  // Notification state - kept as useState (simple state)
+  const [showNotification, setShowNotification] = useState(false);
+  const [notification, setNotification] = useState({
+    type: "success", // success, error
+    title: "",
+    message: "",
   });
+
+  // Complex modal/form state - migrated to useReducer (enterprise pattern)
+  const [modalFormState, modalFormDispatch] = useReducer(
+    modalFormReducer,
+    initialModalFormState
+  );
+  const { showCreateModal, editingFlag, formData } = modalFormState;
 
   // API hooks
   const {
@@ -112,77 +173,69 @@ const AdminDashboard = () => {
     error: flagsError,
     refetch: refetchFlags,
   } = useFeatureFlagsGrouped();
-  
+
   // Debugging temporal
-  console.log('Feature flags data:', featureFlags);
-  console.log('Feature flags loading:', flagsLoading);
-  console.log('Feature flags error:', flagsError);
   const toggleFeatureMutation = useToggleFeatureFlag();
   const createFeatureMutation = useCreateFeatureFlag();
   const updateFeatureMutation = useUpdateFeatureFlag();
   const deleteFeatureMutation = useDeleteFeatureFlag();
 
-  const showNotificationMessage = (type, title, message) => {
+  const showNotificationMessage = useCallback((type, title, message) => {
     setNotification({ type, title, message });
     setShowNotification(true);
     setTimeout(() => setShowNotification(false), 4000);
-  };
+  }, []);
 
-  const handleTabChange = (tab) => {
+  const handleTabChange = useCallback((tab) => {
     setActiveTab(tab);
-  };
+  }, []);
 
-  const handlePeriodChange = (period) => {
+  const handlePeriodChange = useCallback((period) => {
     setSelectedPeriod(period);
-  };
+  }, []);
 
-  const handleExport = (type) => {
-    exportData.mutate({ type, period: selectedPeriod });
-  };
+  const handleExport = useCallback(
+    (type) => {
+      exportData.mutate({ type, period: selectedPeriod });
+    },
+    [selectedPeriod, exportData]
+  );
 
-  const handleFeatureToggle = (featureId) => {
-    toggleFeatureMutation.mutate(featureId, {
-      onSuccess: () => {
-        showNotificationMessage(
-          "success", 
-          "Feature Flag Actualizado", 
-          "El estado del feature flag se cambió correctamente."
-        );
-      },
-      onError: (error) => {
-        console.error("Error toggling feature flag:", error);
-        showNotificationMessage(
-          "error", 
-          "Error al Actualizar", 
-          "No se pudo cambiar el estado del feature flag. Por favor, intenta nuevamente."
-        );
-      }
-    });
-  };
+  const handleFeatureToggle = useCallback(
+    (featureId) => {
+      toggleFeatureMutation.mutate(featureId, {
+        onSuccess: () => {
+          showNotificationMessage(
+            "success",
+            "Feature Flag Actualizado",
+            "El estado del feature flag se cambió correctamente."
+          );
+        },
+        onError: (error) => {
+          showNotificationMessage(
+            "error",
+            "Error al Actualizar",
+            "No se pudo cambiar el estado del feature flag. Por favor, intenta nuevamente."
+          );
+        },
+      });
+    },
+    [toggleFeatureMutation, showNotificationMessage]
+  );
 
-  const handleCreateFlag = () => {
-    setFormData({
-      id: "",
-      name: "",
-      description: "",
-      category: "general",
-      isEnabled: false,
-    });
-    setEditingFlag(null);
-    setShowCreateModal(true);
-  };
+  const handleCreateFlag = useCallback(() => {
+    modalFormDispatch({ type: "OPEN_CREATE_MODAL" });
+  }, [modalFormDispatch]);
 
-  const handleEditFlag = (flag) => {
-    setFormData({
-      id: flag.id,
-      name: flag.name,
-      description: flag.description || "",
-      category: flag.category || "general",
-      isEnabled: flag.isEnabled,
-    });
-    setEditingFlag(flag);
-    setShowCreateModal(true);
-  };
+  const handleEditFlag = useCallback(
+    (flag) => {
+      modalFormDispatch({
+        type: "OPEN_EDIT_MODAL",
+        payload: { flag },
+      });
+    },
+    [modalFormDispatch]
+  );
 
   const handleDeleteFlag = (flagId) => {
     if (
@@ -197,13 +250,12 @@ const AdminDashboard = () => {
           );
         },
         onError: (error) => {
-          console.error("Error deleting feature flag:", error);
           showNotificationMessage(
             "error",
             "Error al Eliminar",
             "No se pudo eliminar el feature flag. Por favor, intenta nuevamente."
           );
-        }
+        },
       });
     }
   };
@@ -213,41 +265,58 @@ const AdminDashboard = () => {
 
     // Validar que el ID no esté vacío y no contenga espacios
     if (!editingFlag && (!formData.id || formData.id.trim() === "")) {
-      showNotificationMessage("error", "Error de Validación", "El ID es requerido");
+      showNotificationMessage(
+        "error",
+        "Error de Validación",
+        "El ID es requerido"
+      );
       return;
     }
 
     // Validar formato del ID (solo letras, números y guiones bajos)
     const idPattern = /^[a-zA-Z0-9_]+$/;
     if (!editingFlag && !idPattern.test(formData.id)) {
-      showNotificationMessage("error", "Error de Validación", "El ID solo puede contener letras, números y guiones bajos");
+      showNotificationMessage(
+        "error",
+        "Error de Validación",
+        "El ID solo puede contener letras, números y guiones bajos"
+      );
       return;
     }
 
     if (editingFlag) {
-      updateFeatureMutation.mutate({
-        id: editingFlag.id,
-        data: {
-          name: formData.name,
-          description: formData.description,
-          category: formData.category,
-          isEnabled: formData.isEnabled,
+      updateFeatureMutation.mutate(
+        {
+          id: editingFlag.id,
+          data: {
+            name: formData.name,
+            description: formData.description,
+            category: formData.category,
+            isEnabled: formData.isEnabled,
+          },
         },
-      }, {
-        onSuccess: () => {
-          showNotificationMessage("success", "Feature Flag Actualizado", "El feature flag se actualizó correctamente.");
-          setShowCreateModal(false);
-          setEditingFlag(null);
-        },
-        onError: (error) => {
-          console.error("Error updating feature flag:", error);
-          let errorMessage = "Error al actualizar el feature flag";
-          if (error?.response?.data?.error) {
-            errorMessage = error.response.data.error;
-          }
-          showNotificationMessage("error", "Error al Actualizar", errorMessage);
+        {
+          onSuccess: () => {
+            showNotificationMessage(
+              "success",
+              "Feature Flag Actualizado",
+              "El feature flag se actualizó correctamente."
+            );
+            modalFormDispatch({ type: "CLOSE_MODAL" });
+          },
+          onError: (error) => {
+            let errorMessage = "Error al actualizar el feature flag";
+            if (error?.response?.data?.error) {
+              errorMessage = error.response.data.error;
+            }
+            showNotificationMessage(
+              "error",
+              "Error al Actualizar",
+              errorMessage
+            );
+          },
         }
-      });
+      );
     } else {
       // Verificar si el ID ya existe
       const allFlags =
@@ -257,18 +326,24 @@ const AdminDashboard = () => {
 
       const existingFlag = allFlags.find((flag) => flag.id === formData.id);
       if (existingFlag) {
-        showNotificationMessage("error", "Error de Validación", `Ya existe un feature flag con el ID "${formData.id}"`);
+        showNotificationMessage(
+          "error",
+          "Error de Validación",
+          `Ya existe un feature flag con el ID "${formData.id}"`
+        );
         return;
       }
 
       createFeatureMutation.mutate(formData, {
         onSuccess: () => {
-          showNotificationMessage("success", "Feature Flag Creado", "El nuevo feature flag se creó correctamente.");
-          setShowCreateModal(false);
-          setEditingFlag(null);
+          showNotificationMessage(
+            "success",
+            "Feature Flag Creado",
+            "El nuevo feature flag se creó correctamente."
+          );
+          modalFormDispatch({ type: "CLOSE_MODAL" });
         },
         onError: (error) => {
-          console.error("Error creating feature flag:", error);
           let errorMessage = "Error al crear el feature flag";
           if (error?.response?.data?.error) {
             errorMessage = error.response.data.error;
@@ -279,15 +354,14 @@ const AdminDashboard = () => {
             errorMessage = `Ya existe un feature flag con el ID "${formData.id}"`;
           }
           showNotificationMessage("error", "Error al Crear", errorMessage);
-        }
+        },
       });
     }
   };
 
-  const handleCloseModal = () => {
-    setShowCreateModal(false);
-    setEditingFlag(null);
-  };
+  const handleCloseModal = useCallback(() => {
+    modalFormDispatch({ type: "CLOSE_MODAL" });
+  }, [modalFormDispatch]);
 
   // Loading state
   if (statsLoading) {
@@ -786,9 +860,6 @@ const AdminDashboard = () => {
         ? Object.values(featureFlags).filter(Array.isArray).flat()
         : [];
 
-    console.log('Render allFlags:', allFlags);
-    console.log('Render featureFlags raw:', featureFlags);
-
     return (
       <div className="space-y-6">
         <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-6">
@@ -1021,7 +1092,10 @@ const AdminDashboard = () => {
                   const value = e.target.value
                     .toLowerCase()
                     .replace(/[^a-z0-9_]/g, "");
-                  setFormData({ ...formData, id: value });
+                  modalFormDispatch({
+                    type: "UPDATE_FORM_DATA",
+                    payload: { id: value },
+                  });
                 }}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                 placeholder="ej: new_feature"
@@ -1043,7 +1117,10 @@ const AdminDashboard = () => {
                 type="text"
                 value={formData.name}
                 onChange={(e) =>
-                  setFormData({ ...formData, name: e.target.value })
+                  modalFormDispatch({
+                    type: "UPDATE_FORM_DATA",
+                    payload: { name: e.target.value },
+                  })
                 }
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                 placeholder="ej: Nueva Funcionalidad"
@@ -1058,7 +1135,10 @@ const AdminDashboard = () => {
               <textarea
                 value={formData.description}
                 onChange={(e) =>
-                  setFormData({ ...formData, description: e.target.value })
+                  modalFormDispatch({
+                    type: "UPDATE_FORM_DATA",
+                    payload: { description: e.target.value },
+                  })
                 }
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                 placeholder="Descripción del feature flag"
@@ -1073,7 +1153,10 @@ const AdminDashboard = () => {
               <select
                 value={formData.category}
                 onChange={(e) =>
-                  setFormData({ ...formData, category: e.target.value })
+                  modalFormDispatch({
+                    type: "UPDATE_FORM_DATA",
+                    payload: { category: e.target.value },
+                  })
                 }
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
               >
@@ -1093,7 +1176,10 @@ const AdminDashboard = () => {
                 id="isEnabled"
                 checked={formData.isEnabled}
                 onChange={(e) =>
-                  setFormData({ ...formData, isEnabled: e.target.checked })
+                  modalFormDispatch({
+                    type: "UPDATE_FORM_DATA",
+                    payload: { isEnabled: e.target.checked },
+                  })
                 }
                 className="w-4 h-4 text-purple-600 bg-gray-100 border-gray-300 rounded focus:ring-purple-500 focus:ring-2"
               />
@@ -1160,10 +1246,12 @@ const AdminDashboard = () => {
                 </p>
                 <p className="text-2xl font-bold text-green-600">
                   $
-                  {financialMetrics?.monthlyRevenue?.current || 
-                   (typeof financialMetrics?.totalRevenue === 'object' ? 
-                     (financialMetrics?.totalRevenue?.current || financialMetrics?.totalRevenue?.amount || "152,000") :
-                     (financialMetrics?.totalRevenue || "152,000"))}
+                  {financialMetrics?.monthlyRevenue?.current ||
+                    (typeof financialMetrics?.totalRevenue === "object"
+                      ? financialMetrics?.totalRevenue?.current ||
+                        financialMetrics?.totalRevenue?.amount ||
+                        "152,000"
+                      : financialMetrics?.totalRevenue || "152,000")}
                 </p>
                 <div className="flex items-center gap-1 mt-2">
                   <TrendingUp className="w-4 h-4 text-green-500" />
@@ -1183,13 +1271,17 @@ const AdminDashboard = () => {
                   Transacciones
                 </p>
                 <p className="text-2xl font-bold text-blue-600">
-                  {(typeof financialMetrics?.totalTransactions === 'object' ? 
-                     (financialMetrics?.totalTransactions?.current || financialMetrics?.totalTransactions?.count || "2,847") :
-                     (financialMetrics?.totalTransactions)) ||
-                   (typeof financialMetrics?.transactions === 'object' ? 
-                     (financialMetrics?.transactions?.current || financialMetrics?.transactions?.count || "2,847") :
-                     (financialMetrics?.transactions)) ||
-                   "2,847"}
+                  {(typeof financialMetrics?.totalTransactions === "object"
+                    ? financialMetrics?.totalTransactions?.current ||
+                      financialMetrics?.totalTransactions?.count ||
+                      "2,847"
+                    : financialMetrics?.totalTransactions) ||
+                    (typeof financialMetrics?.transactions === "object"
+                      ? financialMetrics?.transactions?.current ||
+                        financialMetrics?.transactions?.count ||
+                        "2,847"
+                      : financialMetrics?.transactions) ||
+                    "2,847"}
                 </p>
                 <div className="flex items-center gap-1 mt-2">
                   <TrendingUp className="w-4 h-4 text-blue-500" />
@@ -1464,7 +1556,12 @@ const AdminDashboard = () => {
           <div className="flex overflow-x-auto space-x-1">
             {[
               { key: "overview", label: "Overview", icon: Home },
-              { key: "analytics", label: "Analytics", icon: BarChart3, isNew: true },
+              {
+                key: "analytics",
+                label: "Analytics",
+                icon: BarChart3,
+                isNew: true,
+              },
               { key: "users", label: "Usuarios", icon: Users },
               { key: "professionals", label: "Profesionales", icon: UserCheck },
               { key: "bookings", label: "Trabajos", icon: Briefcase },
@@ -1512,17 +1609,21 @@ const AdminDashboard = () => {
       {/* Notification Popup */}
       {showNotification && (
         <div className="fixed top-4 right-4 z-50 max-w-md">
-          <div className={`rounded-xl shadow-2xl border-2 p-6 transform transition-all duration-300 ${
-            notification.type === "success" 
-              ? "bg-green-50 border-green-200" 
-              : "bg-red-50 border-red-200"
-          }`}>
+          <div
+            className={`rounded-xl shadow-2xl border-2 p-6 transform transition-all duration-300 ${
+              notification.type === "success"
+                ? "bg-green-50 border-green-200"
+                : "bg-red-50 border-red-200"
+            }`}
+          >
             <div className="flex items-start gap-3">
-              <div className={`p-2 rounded-full ${
-                notification.type === "success" 
-                  ? "bg-green-100" 
-                  : "bg-red-100"
-              }`}>
+              <div
+                className={`p-2 rounded-full ${
+                  notification.type === "success"
+                    ? "bg-green-100"
+                    : "bg-red-100"
+                }`}
+              >
                 {notification.type === "success" ? (
                   <CheckCircle className="w-6 h-6 text-green-600" />
                 ) : (
@@ -1530,34 +1631,40 @@ const AdminDashboard = () => {
                 )}
               </div>
               <div className="flex-1">
-                <h4 className={`font-bold text-lg ${
-                  notification.type === "success" 
-                    ? "text-green-800" 
-                    : "text-red-800"
-                }`}>
+                <h4
+                  className={`font-bold text-lg ${
+                    notification.type === "success"
+                      ? "text-green-800"
+                      : "text-red-800"
+                  }`}
+                >
                   {notification.title}
                 </h4>
-                <p className={`text-sm mt-1 ${
-                  notification.type === "success" 
-                    ? "text-green-700" 
-                    : "text-red-700"
-                }`}>
+                <p
+                  className={`text-sm mt-1 ${
+                    notification.type === "success"
+                      ? "text-green-700"
+                      : "text-red-700"
+                  }`}
+                >
                   {notification.message}
                 </p>
               </div>
               <button
                 onClick={() => setShowNotification(false)}
                 className={`p-1 rounded-full hover:bg-opacity-20 transition-colors ${
-                  notification.type === "success" 
-                    ? "hover:bg-green-600" 
+                  notification.type === "success"
+                    ? "hover:bg-green-600"
                     : "hover:bg-red-600"
                 }`}
               >
-                <X className={`w-5 h-5 ${
-                  notification.type === "success" 
-                    ? "text-green-600" 
-                    : "text-red-600"
-                }`} />
+                <X
+                  className={`w-5 h-5 ${
+                    notification.type === "success"
+                      ? "text-green-600"
+                      : "text-red-600"
+                  }`}
+                />
               </button>
             </div>
           </div>
@@ -1567,4 +1674,7 @@ const AdminDashboard = () => {
   );
 };
 
-export default AdminDashboard;
+export default memo(AdminDashboard);
+
+// Add display name for better debugging
+AdminDashboard.displayName = "AdminDashboard";

@@ -153,15 +153,19 @@ export const usePerformanceMonitor = () => {
       const observer = new PerformanceObserver((list) => {
         list.getEntries().forEach((entry) => {
           if (entry.entryType === 'navigation') {
-            console.log('Navigation Timing:', {
-              domContentLoaded: entry.domContentLoadedEventEnd - entry.domContentLoadedEventStart,
-              loadComplete: entry.loadEventEnd - entry.loadEventStart,
-              firstPaint: entry.responseEnd - entry.requestStart
-            });
+            if (import.meta.env.MODE === 'development') {
+              console.log('Navigation Timing:', {
+                domContentLoaded: entry.domContentLoadedEventEnd - entry.domContentLoadedEventStart,
+                loadComplete: entry.loadEventEnd - entry.loadEventStart,
+                firstPaint: entry.responseEnd - entry.requestStart
+              });
+            }
           }
           
           if (entry.entryType === 'paint') {
-            console.log(`${entry.name}: ${entry.startTime}ms`);
+            if (import.meta.env.MODE === 'development') {
+              console.log(`${entry.name}: ${entry.startTime}ms`);
+            }
           }
         });
       });
@@ -177,9 +181,13 @@ export const usePerformanceMonitor = () => {
 export const setupServiceWorker = () => {
   if ('serviceWorker' in navigator && import.meta.env.MODE === 'production') {
     navigator.serviceWorker.register('/sw.js').then(registration => {
-      console.log('SW registered: ', registration);
+      if (import.meta.env.MODE === 'development') {
+        console.log('SW registered: ', registration);
+      }
     }).catch(registrationError => {
-      console.log('SW registration failed: ', registrationError);
+      if (import.meta.env.MODE === 'development') {
+        console.log('SW registration failed: ', registrationError);
+      }
     });
   }
 };

@@ -15,7 +15,7 @@ import {
 // import { InputField as Input } from "../../components/base";
 import { useFormik } from "formik";
 import { AuthContext } from "../../context/AuthContext";
-import Button from "../../components/template/ui/button/Button";
+import { Button } from "../../components/atoms/Button/Button";
 import * as Yup from "yup";
 
 const validationSchema = Yup.object({

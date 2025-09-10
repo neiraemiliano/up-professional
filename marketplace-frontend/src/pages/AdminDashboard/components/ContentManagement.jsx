@@ -160,7 +160,6 @@ const ContentManagement = () => {
 
   const handleSaveContent = () => {
     // Implementation for saving content
-    console.log('Saving content:', formData);
     setShowCreateModal(false);
     setShowEditModal(false);
     setSelectedContent(null);
@@ -169,7 +168,6 @@ const ContentManagement = () => {
   const handleDeleteContent = (contentId) => {
     if (window.confirm('¿Estás seguro de que deseas eliminar este contenido?')) {
       // Implementation for deleting content
-      console.log('Deleting content:', contentId);
     }
   };
 

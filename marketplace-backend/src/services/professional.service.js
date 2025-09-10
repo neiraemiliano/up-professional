@@ -1,9 +1,7 @@
 // src/services/professional.service.js
 const BaseService = require("./base.service");
 const professionalRepo = require("../repositories/ProfessionalRepository");
-const { PrismaClient } = require("@prisma/client");
-
-const prisma = new PrismaClient();
+const prisma = require("../config/database");
 
 class ProfessionalService extends BaseService {
   constructor() {
@@ -243,7 +241,7 @@ class ProfessionalService extends BaseService {
         supportsUrgent,
         insurance,
         languages,
-        selectedPlan = 'free'
+        subscriptionPlan = 'basic'
       } = professionalData;
 
       // First check if professional record already exists
@@ -282,11 +280,11 @@ class ProfessionalService extends BaseService {
       }
 
       // Get subscription plan details
-      const subscriptionPlan = await prisma.subscriptionPlan.findUnique({
-        where: { id: selectedPlan }
+      const subscriptionPlanData = await prisma.subscriptionPlan.findUnique({
+        where: { id: subscriptionPlan }
       });
 
-      if (!subscriptionPlan) {
+      if (!subscriptionPlanData) {
         throw new Error('Invalid subscription plan selected');
       }
 
@@ -311,12 +309,12 @@ class ProfessionalService extends BaseService {
           languages: languages ? JSON.stringify(languages) : JSON.stringify(['Español']),
           locationId: location?.id || null,
           // Subscription fields
-          subscriptionPlan: selectedPlan,
+          subscriptionPlan: subscriptionPlan,
           subscriptionStatus: 'active',
-          subscriptionExpiresAt: selectedPlan === 'free' ? null : new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days from now
-          isPriority: subscriptionPlan.isPriority,
-          isFeatured: subscriptionPlan.isFeatured,
-          monthlyLeadLimit: subscriptionPlan.monthlyLeadLimit,
+          subscriptionExpiresAt: subscriptionPlan === 'basic' ? null : new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days from now
+          isPriority: subscriptionPlanData.isPriority,
+          isFeatured: subscriptionPlanData.isFeatured,
+          monthlyLeadLimit: subscriptionPlanData.monthlyLeadLimit,
           monthlyLeadsUsed: 0,
           leadsResetDate: new Date()
         },
@@ -335,13 +333,13 @@ class ProfessionalService extends BaseService {
         }
       });
 
-      // Create subscription record if not free plan
+      // Create subscription record if not basic plan
       let paymentInfo = null;
-      if (selectedPlan !== 'free') {
+      if (subscriptionPlan !== 'basic') {
         const subscription = await prisma.subscription.create({
           data: {
             professionalId: professional.id,
-            planId: selectedPlan,
+            planId: subscriptionPlan,
             status: 'pending_payment', // Pending until payment is confirmed
             startDate: new Date(),
             expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days
@@ -364,9 +362,9 @@ class ProfessionalService extends BaseService {
         // Return payment information for frontend
         paymentInfo = {
           requiresPayment: true,
-          planName: subscriptionPlan.name,
-          amount: subscriptionPlan.price,
-          planId: selectedPlan,
+          planName: subscriptionPlanData.name,
+          amount: subscriptionPlanData.price,
+          planId: subscriptionPlan,
           professionalId: professional.id
         };
       }
@@ -377,6 +375,109 @@ class ProfessionalService extends BaseService {
       };
     } catch (error) {
       console.error('Error in completeRegistration:', error);
+      throw error;
+    }
+  }
+
+  // Check professional onboarding status
+  async checkOnboardingStatus(userId) {
+    try {
+      console.log('checkOnboardingStatus called with userId:', userId);
+      
+      // Get professional record by userId
+      const professional = await prisma.professional.findUnique({
+        where: { userId: parseInt(userId) },
+        select: {
+          id: true,
+          description: true,
+          experience: true,
+          bio: true,
+          priceFrom: true,
+          subscriptionPlan: true,
+          subscriptionStatus: true,
+          locationId: true,
+          workingHours: true
+        }
+      });
+
+      if (!professional) {
+        return {
+          requiresOnboarding: true,
+          isCompleted: false,
+          completionPercentage: 0,
+          missingFields: ['all']
+        };
+      }
+
+      // Check required fields completion
+      const missingFields = [];
+      if (!professional.description || professional.description.trim().length === 0) {
+        missingFields.push('description');
+      }
+      if (!professional.experience) {
+        missingFields.push('experience');
+      }
+      if (!professional.bio || professional.bio.trim().length === 0) {
+        missingFields.push('bio');
+      }
+      if (!professional.priceFrom) {
+        missingFields.push('priceFrom');
+      }
+      if (!professional.locationId) {
+        missingFields.push('location');
+      }
+      if (!professional.subscriptionPlan) {
+        missingFields.push('subscriptionPlan');
+      }
+
+      const isCompleted = missingFields.length === 0;
+      const totalFields = 6;
+      const completedFields = totalFields - missingFields.length;
+      const completionPercentage = Math.round((completedFields / totalFields) * 100);
+
+      return {
+        requiresOnboarding: !isCompleted,
+        isCompleted,
+        completionPercentage,
+        missingFields,
+        professional: isCompleted ? professional : null
+      };
+    } catch (error) {
+      console.error('Error in checkOnboardingStatus:', error);
+      throw error;
+    }
+  }
+
+  // Mark onboarding as completed
+  async markOnboardingComplete(userId) {
+    try {
+      console.log('markOnboardingComplete called with userId:', userId);
+      
+      const professional = await prisma.professional.findUnique({
+        where: { userId: parseInt(userId) }
+      });
+
+      if (!professional) {
+        const error = new Error('Professional profile not found');
+        error.status = 404;
+        throw error;
+      }
+
+      // Update professional with onboarding completion timestamp
+      const updatedProfessional = await prisma.professional.update({
+        where: { userId: parseInt(userId) },
+        data: {
+          onboardingCompletedAt: new Date()
+        }
+      });
+
+      return {
+        success: true,
+        message: 'Onboarding marked as completed',
+        professional: updatedProfessional
+      };
+    } catch (error) {
+      console.error('Error in markOnboardingComplete:', error);
       throw error;
     }
   }

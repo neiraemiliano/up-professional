@@ -9,6 +9,10 @@ router.post("/complete-registration", authMiddleware, professionalController.com
 // Professional dashboard (professional role required) - must be before /:id route
 router.get("/dashboard", authMiddleware, requireRole("professional"), professionalController.getDashboard);
 
+// Onboarding status routes (authenticated users)
+router.get("/onboarding-status", authMiddleware, professionalController.checkOnboardingStatus);
+router.post("/complete-onboarding", authMiddleware, professionalController.markOnboardingComplete);
+
 // Rutas públicas
 router.get("/search", professionalController.searchProfessionals);
 router.get("/:id/profile", professionalController.getFullProfile);
@@ -17,13 +21,13 @@ router.get("/:id/profile", professionalController.getFullProfile);
 router.post("/:id/whatsapp", professionalController.generateWhatsAppURL);
 router.get("/:id/whatsapp/check", professionalController.checkWhatsAppAvailability);
 
-// Rutas originales
+// Rutas originales - Protected CRUD operations
 router
-  .get("/", professionalController.getAll)
-  .get("/:id", professionalController.getById)
-  .post("/", professionalController.create)
-  .put("/:id", professionalController.update)
-  .delete("/:id", professionalController.delete);
+  .get("/", professionalController.getAll) // Public for listing professionals
+  .get("/:id", professionalController.getById) // Public for viewing profiles
+  .post("/", authMiddleware, requireRole("admin"), professionalController.create) // Admin only
+  .put("/:id", authMiddleware, professionalController.update) // Auth required for updates
+  .delete("/:id", authMiddleware, requireRole("admin"), professionalController.delete); // Admin only
 
 // Rutas con autenticación
 router.patch("/urgent-settings", authMiddleware, professionalController.updateUrgentSettings);

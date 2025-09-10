@@ -17,9 +17,9 @@ import { initialValues, validationSchema } from "../../config/forms/signInForm";
 import { getText } from "../../config/texts/texts";
 import { AuthContext } from "../../context/AuthContext";
 import { ChevronLeftIcon, EyeCloseIcon, EyeIcon } from "../../icons";
-import { InputField as Input } from "../base";
+import { Input } from "../atoms/Input/Input";
 import Checkbox from "../template/form/input/Checkbox";
-import Button from "../template/ui/button/Button";
+import { Button } from "../atoms/Button/Button";
 
 export default function SignInForm() {
   const authContext = useContext(AuthContext);
@@ -328,8 +328,8 @@ export default function SignInForm() {
                 value={formik.values.email}
                 onChange={formik.handleChange}
                 error={formik.touched.email && formik.errors.email}
-                hint={formik.touched.email && formik.errors.email}
-                leftIcon={Mail}
+                helperText={formik.touched.email && formik.errors.email}
+                leftIcon={<Mail size={18} />}
                 required
               />
 
@@ -343,9 +343,9 @@ export default function SignInForm() {
                 value={formik.values.password}
                 onChange={formik.handleChange}
                 error={formik.touched.password && formik.errors.password}
-                hint={formik.touched.password && formik.errors.password}
-                leftIcon={Lock}
-                rightIcon={showPassword ? EyeIcon : EyeCloseIcon}
+                helperText={formik.touched.password && formik.errors.password}
+                leftIcon={<Lock size={18} />}
+                rightIcon={showPassword ? <EyeIcon size={18} /> : <EyeCloseIcon size={18} />}
                 onRightIconClick={() => setShowPassword(!showPassword)}
                 required
               />

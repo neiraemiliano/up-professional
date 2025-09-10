@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { X, Save, RotateCcw, Eye, EyeOff } from 'lucide-react';
+import DOMPurify from 'dompurify';
 
 const ContentEditor = ({ content, isCreating, categories, onSave, onCancel }) => {
   const [formData, setFormData] = useState({
@@ -128,7 +129,12 @@ const ContentEditor = ({ content, isCreating, categories, onSave, onCancel }) =>
       case 'html':
         return (
           <div 
-            dangerouslySetInnerHTML={{ __html: formData.value }}
+            dangerouslySetInnerHTML={{ 
+              __html: DOMPurify.sanitize(formData.value, {
+                ALLOWED_TAGS: ['p', 'br', 'strong', 'em', 'u', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'ul', 'ol', 'li', 'a', 'img'],
+                ALLOWED_ATTR: ['href', 'src', 'alt', 'title', 'target', 'class']
+              })
+            }}
             className="prose max-w-none"
           />
         );

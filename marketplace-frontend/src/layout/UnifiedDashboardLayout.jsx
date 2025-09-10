@@ -336,8 +336,9 @@ const UnifiedDashboardLayout = () => {
   }, [location]);
 
   const handleLogout = () => {
-    logout();
+    console.log("Logout");
     navigate("/");
+    logout();
   };
 
   const getNotificationColor = (type) => {
@@ -409,7 +410,7 @@ const UnifiedDashboardLayout = () => {
                       {section.items.map((item, itemIndex) => {
                         const isActive = isActiveRoute(
                           item.path,
-                          item.activeTab,
+                          item.activeTab
                         );
                         const linkPath = item.activeTab
                           ? `${item.path}?tab=${item.activeTab}`
@@ -549,7 +550,7 @@ const UnifiedDashboardLayout = () => {
                           <div
                             key={notification.id}
                             className={`p-4 border-l-4 ${getNotificationColor(
-                              notification.type,
+                              notification.type
                             )} m-2 rounded-r-lg`}
                           >
                             <p className="font-medium">{notification.title}</p>

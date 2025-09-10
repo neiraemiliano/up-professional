@@ -223,7 +223,6 @@ const AnnouncementManagement = () => {
 
   const handleSaveAnnouncement = () => {
     // Implementation for saving announcement
-    console.log('Saving announcement:', formData);
     setShowCreateModal(false);
     setShowEditModal(false);
     setSelectedAnnouncement(null);
@@ -232,13 +231,11 @@ const AnnouncementManagement = () => {
   const handleDeleteAnnouncement = (announcementId) => {
     if (window.confirm('¿Estás seguro de que deseas eliminar este anuncio?')) {
       // Implementation for deleting announcement
-      console.log('Deleting announcement:', announcementId);
     }
   };
 
   const handleToggleActive = (announcementId) => {
     // Implementation for toggling announcement active status
-    console.log('Toggling active status for announcement:', announcementId);
   };
 
   const filteredAnnouncements = announcementsData.filter(announcement => {

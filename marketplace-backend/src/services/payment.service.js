@@ -500,6 +500,17 @@ class PaymentService {
     }
   }
 
+  async verifyPayment(paymentId) {
+    try {
+      console.log('Verifying payment:', paymentId);
+      const mpPayment = await this.payment.get({ id: paymentId });
+      return mpPayment;
+    } catch (error) {
+      console.error('Error verifying payment:', error);
+      throw error;
+    }
+  }
+
   // ========== UTILIDADES ==========
   mapMercadoPagoStatus(mpStatus) {
     const statusMap = {

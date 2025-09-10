@@ -2,7 +2,7 @@ import { useModal } from "../../../hooks/useModal";
 import { Modal } from "../../../components/template/ui/modal";
 import Button from "../../../components/template/ui/button/Button";
 import Label from "../../../components/template/form/Label";
-import { InputField as Input } from "../../../components/base";
+import { Input } from "../../../components/atoms/Input/Input";
 import { Mail, MapPin, Phone, Star } from "lucide-react";
 
 export default function MetaCard({
@@ -23,7 +23,6 @@ export default function MetaCard({
   const { isOpen, openModal, closeModal } = useModal();
   const handleSave = () => {
     // Handle save logic here
-    console.log("Saving changes...");
     closeModal();
   };
   return (

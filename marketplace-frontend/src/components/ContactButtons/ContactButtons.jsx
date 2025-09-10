@@ -1,5 +1,5 @@
 import { MessageCircle, Phone, Mail } from "lucide-react";
-import Button from "../template/ui/button/Button";
+import { Button } from "../atoms/Button/Button";
 import { useAnalytics } from "../../utils/analytics";
 
 const ContactButtons = ({ professional, className = "" }) => {

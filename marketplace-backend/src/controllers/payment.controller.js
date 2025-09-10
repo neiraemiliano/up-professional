@@ -1,8 +1,109 @@
 const PaymentService = require('../services/payment.service');
 const NotificationService = require('../services/notification.service');
+const prisma = require('../config/database');
 
 class PaymentController {
   // ========== SUSCRIPCIONES ==========
+  async createSubscriptionPreference(req, res) {
+    try {
+      const { professionalId, planId } = req.body;
+      const userId = req.user.id;
+
+      if (!professionalId || !planId) {
+        return res.status(400).json({
+          success: false,
+          error: 'professionalId y planId son requeridos'
+        });
+      }
+
+      // Verificar que el usuario sea dueño del perfil profesional
+      const professional = await prisma.professional.findUnique({
+        where: { id: parseInt(professionalId) },
+        select: { userId: true }
+      });
+
+      if (!professional || professional.userId !== userId) {
+        return res.status(403).json({
+          success: false,
+          error: 'No tienes permiso para actualizar este perfil profesional'
+        });
+      }
+
+      const payment = await PaymentService.createSubscriptionPayment(
+        parseInt(professionalId),
+        planId,
+        userId
+      );
+
+      res.status(201).json({
+        success: true,
+        data: payment,
+        message: 'Preferencia de pago de suscripción creada exitosamente'
+      });
+
+    } catch (error) {
+      console.error('Error creating subscription preference:', error);
+      res.status(500).json({
+        success: false,
+        error: error.message || 'Error interno del servidor'
+      });
+    }
+  }
+
+  // Process payment success callback
+  async processPaymentSuccess(req, res) {
+    try {
+      // Support both GET (MercadoPago redirect) and POST (frontend call)
+      const data = req.method === 'GET' ? req.query : req.body;
+      const { type, professionalId, planId, paymentId, payment_id, status, userId } = data;
+
+      if (type === 'subscription') {
+        // Verificar el estado del pago en MercadoPago
+        const finalPaymentId = paymentId || payment_id;
+        const mpPayment = await PaymentService.verifyPayment(finalPaymentId);
+        
+        if (mpPayment && mpPayment.status === 'approved') {
+          // Actualizar la base de datos
+          await PaymentService.processApprovedSubscriptionPayment({
+            externalData: {
+              professional_id: parseInt(professionalId),
+              plan_id: planId
+            }
+          });
+
+          res.json({
+            success: true,
+            message: 'Pago procesado exitosamente',
+            data: {
+              status: 'approved',
+              type: 'subscription',
+              professionalId,
+              planId
+            }
+          });
+        } else {
+          res.status(400).json({
+            success: false,
+            error: 'El pago no ha sido aprobado',
+            status: mpPayment?.status || 'unknown'
+          });
+        }
+      } else {
+        res.status(400).json({
+          success: false,
+          error: 'Tipo de pago no soportado'
+        });
+      }
+
+    } catch (error) {
+      console.error('Error processing payment success:', error);
+      res.status(500).json({
+        success: false,
+        error: error.message || 'Error interno del servidor'
+      });
+    }
+  }
+
   async createSubscriptionPayment(req, res) {
     try {
       const { professionalId, planId } = req.body;

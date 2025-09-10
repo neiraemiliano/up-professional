@@ -21,8 +21,8 @@ const SubscriptionPlans = ({ selectedPlan, onPlanSelect, showYearly = false }) =
   
   const plans = [
     {
-      id: 'free',
-      name: 'Plan Gratuito',
+      id: 'basic',
+      name: 'Plan Básico',
       description: 'Perfecto para empezar',
       monthlyPrice: 0,
       yearlyPrice: 0,
@@ -200,7 +200,7 @@ const SubscriptionPlans = ({ selectedPlan, onPlanSelect, showYearly = false }) =
           className={`w-full py-3 px-4 rounded-xl font-semibold transition-all duration-200 flex items-center justify-center gap-2 ${
             isSelected
               ? 'bg-gradient-to-r from-orange-500 to-red-500 text-white shadow-lg'
-              : plan.id === 'free'
+              : plan.id === 'basic'
               ? 'bg-gray-200 text-gray-700 hover:bg-gray-300'
               : `bg-gradient-to-r ${plan.gradient} text-white hover:shadow-lg`
           }`}
@@ -210,7 +210,7 @@ const SubscriptionPlans = ({ selectedPlan, onPlanSelect, showYearly = false }) =
               <Check className="w-5 h-5" />
               Seleccionado
             </>
-          ) : plan.id === 'free' ? (
+          ) : plan.id === 'basic' ? (
             <>
               Comenzar Gratis
               <ArrowRight className="w-4 h-4" />

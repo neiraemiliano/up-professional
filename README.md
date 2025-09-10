@@ -32,6 +32,7 @@
 ## ✨ Características
 
 ### 🏠 **Para Usuarios**
+
 - **Búsqueda Inteligente**: Encuentra profesionales por categoría, ubicación y disponibilidad
 - **Sistema de Reservas**: Agenda servicios con fecha y hora específica
 - **Reservas Urgentes**: Solicita servicios de emergencia (disponible 24/7)
@@ -41,6 +42,7 @@
 - **Notificaciones**: Recibe actualizaciones sobre tus servicios
 
 ### 👷 **Para Profesionales**
+
 - **Perfil Profesional**: Crea y gestiona tu perfil con portfolio de trabajos
 - **Gestión de Servicios**: Define tus servicios, precios y categorías
 - **Calendario de Disponibilidad**: Configura tus horarios disponibles
@@ -51,6 +53,7 @@
 - **Certificaciones**: Sube y gestiona tus certificaciones profesionales
 
 ### 🛡️ **Para Administradores**
+
 - **Panel de Administración**: Dashboard completo para gestión de la plataforma
 - **Gestión de Usuarios**: Administra usuarios, profesionales y verificaciones
 - **Sistema de Pagos**: Monitorea transacciones y comisiones
@@ -59,6 +62,7 @@
 - **Sistema de Feature Flags**: Habilita/deshabilita funcionalidades dinámicamente
 
 ### 🔧 **Características Técnicas**
+
 - **SEO Optimizado**: Meta tags dinámicos y sitemap automático
 - **Responsive Design**: Optimizado para móviles, tablets y desktop
 - **PWA Ready**: Funcionalidades de Progressive Web App
@@ -93,6 +97,7 @@
 ## 🛠️ Tecnologías
 
 ### Frontend
+
 - **React 19** - Biblioteca de interfaces de usuario
 - **TypeScript** - Tipado estático para JavaScript
 - **Vite** - Build tool y dev server ultra-rápido
@@ -106,6 +111,7 @@
 - **React DnD** - Drag and drop
 
 ### Backend
+
 - **Node.js 18+** - Runtime de JavaScript
 - **Express 5** - Framework web minimalista
 - **Prisma 6** - ORM de próxima generación
@@ -119,6 +125,7 @@
 - **MercadoPago SDK** - Procesamiento de pagos
 
 ### DevOps & Deployment
+
 - **Docker** - Contenedorización
 - **Nginx** - Servidor web y proxy reverso
 - **PM2** - Process manager para Node.js
@@ -147,12 +154,14 @@ cd up-professional
 ### Instalación de Dependencias
 
 **Frontend:**
+
 ```bash
 cd marketplace-frontend
 npm install
 ```
 
 **Backend:**
+
 ```bash
 cd marketplace-backend
 npm install
@@ -165,6 +174,7 @@ El proyecto está configurado con dos entornos principales:
 ### Development (Desarrollo Local)
 
 **Frontend (.env.development)**
+
 ```bash
 # API Configuration - Localhost Backend
 VITE_API_URL=http://localhost:3000/api
@@ -180,6 +190,7 @@ VITE_DEBUG_MODE=true
 ```
 
 **Backend (.env.development)**
+
 ```bash
 # Database - Local PostgreSQL
 DATABASE_URL="postgresql://localhost:5432/marketplace_dev?schema=public"
@@ -200,6 +211,7 @@ MERCADOPAGO_PUBLIC_KEY="TEST-your-test-key-here"
 ### Production (Producción)
 
 **Frontend (.env.production)**
+
 ```bash
 # API Configuration - Production Backend
 VITE_API_URL=https://home-fixed.com/api
@@ -215,6 +227,7 @@ VITE_DEBUG_MODE=false
 ```
 
 **Backend (.env.production)**
+
 ```bash
 # Database - Production PostgreSQL
 DATABASE_URL="postgresql://user:password@host:5432/marketplace?schema=public"
@@ -238,15 +251,17 @@ MERCADOPAGO_ACCESS_TOKEN="APP_USR-your-production-token-here"
 ### Configuración de Base de Datos
 
 1. **Crear la base de datos:**
+
 ```bash
 # Desarrollo
 createdb marketplace_dev
 
-# Producción  
+# Producción
 createdb marketplace
 ```
 
 2. **Ejecutar migraciones:**
+
 ```bash
 cd marketplace-backend
 npx prisma db push
@@ -254,6 +269,7 @@ npx prisma generate
 ```
 
 3. **Poblar con datos de ejemplo (opcional):**
+
 ```bash
 npx prisma db seed
 ```
@@ -263,6 +279,7 @@ npx prisma db seed
 ### Levantar el Entorno de Desarrollo
 
 **Terminal 1 - Backend:**
+
 ```bash
 cd marketplace-backend
 npm run dev
@@ -270,8 +287,9 @@ npm run dev
 ```
 
 **Terminal 2 - Frontend:**
+
 ```bash
-cd marketplace-frontend  
+cd marketplace-frontend
 npm run dev
 # Aplicación corriendo en http://localhost:5173
 ```
@@ -279,6 +297,7 @@ npm run dev
 ### Scripts de Desarrollo Disponibles
 
 **Frontend:**
+
 ```bash
 npm run dev          # Inicia dev server con hot-reload
 npm run build:dev    # Build para desarrollo
@@ -287,6 +306,7 @@ npm run lint         # Ejecuta ESLint
 ```
 
 **Backend:**
+
 ```bash
 npm run dev          # Inicia servidor con nodemon
 npm run start:dev    # Inicia servidor sin hot-reload
@@ -296,12 +316,14 @@ npm run build        # Ejecuta migraciones de Prisma
 ### Debugging
 
 **Frontend Debug:**
+
 ```bash
 # Las dev tools están habilitadas en desarrollo
 # Revisa la consola del navegador para logs
 ```
 
 **Backend Debug:**
+
 ```bash
 # Los logs se muestran en la consola
 # Para debugging detallado:
@@ -313,6 +335,7 @@ DEBUG=* npm run dev
 ### Build para Producción
 
 **Frontend:**
+
 ```bash
 cd marketplace-frontend
 npm run build
@@ -320,6 +343,7 @@ npm run build
 ```
 
 **Backend:**
+
 ```bash
 cd marketplace-backend
 npm run build  # Genera cliente de Prisma y ejecuta migraciones
@@ -328,6 +352,7 @@ npm run build  # Genera cliente de Prisma y ejecuta migraciones
 ### Ejecutar en Producción
 
 **Frontend (Servir archivos estáticos):**
+
 ```bash
 # Con un servidor web como Nginx, Apache, o servir con Node.js:
 cd marketplace-frontend
@@ -335,6 +360,7 @@ npm run preview
 ```
 
 **Backend:**
+
 ```bash
 cd marketplace-backend
 npm start
@@ -350,7 +376,7 @@ Asegúrate de configurar estas variables críticas en producción:
 DATABASE_URL="postgresql://..."
 JWT_SECRET="your-strong-secret"
 MERCADOPAGO_ACCESS_TOKEN="APP_USR-..."
-CORS_ORIGIN="https://your-domain.com"
+CORS_ORIGIN="https://home-fixed.com"
 
 # Frontend
 VITE_API_URL="https://your-api-domain.com/api"
@@ -362,14 +388,16 @@ VITE_MERCADOPAGO_PUBLIC_KEY="APP_USR-..."
 ### Endpoints Principales
 
 **Authentication:**
+
 ```
 POST /api/auth/register    # Registro de usuario
-POST /api/auth/login       # Inicio de sesión  
+POST /api/auth/login       # Inicio de sesión
 POST /api/auth/logout      # Cerrar sesión
 GET  /api/auth/me          # Obtener perfil actual
 ```
 
 **Users:**
+
 ```
 GET    /api/users          # Listar usuarios
 GET    /api/users/:id      # Obtener usuario por ID
@@ -378,6 +406,7 @@ DELETE /api/users/:id      # Eliminar usuario
 ```
 
 **Professionals:**
+
 ```
 GET    /api/professionals           # Listar profesionales
 POST   /api/professionals           # Crear perfil profesional
@@ -387,6 +416,7 @@ POST   /api/professionals/:id/verify # Verificar profesional
 ```
 
 **Services:**
+
 ```
 GET    /api/services          # Listar servicios
 POST   /api/services          # Crear servicio
@@ -396,6 +426,7 @@ DELETE /api/services/:id      # Eliminar servicio
 ```
 
 **Bookings:**
+
 ```
 GET    /api/bookings              # Listar reservas
 POST   /api/bookings              # Crear reserva
@@ -406,12 +437,14 @@ POST   /api/bookings/:id/cancel   # Cancelar reserva
 ```
 
 **Search:**
+
 ```
 GET /api/search                    # Búsqueda básica
 GET /api/intelligent-search        # Búsqueda inteligente con filtros
 ```
 
 **Payments:**
+
 ```
 POST /api/payments/create-payment   # Crear pago con MercadoPago
 POST /api/payments/webhook          # Webhook de MercadoPago
@@ -429,7 +462,7 @@ Authorization: Bearer <your-jwt-token>
 ### Códigos de Estado
 
 - `200` - OK
-- `201` - Created  
+- `201` - Created
 - `400` - Bad Request
 - `401` - Unauthorized
 - `403` - Forbidden
@@ -442,6 +475,7 @@ Authorization: Bearer <your-jwt-token>
 ### Despliegue Manual
 
 1. **Preparar servidor:**
+
 ```bash
 # Instalar dependencias del sistema
 sudo apt update
@@ -452,6 +486,7 @@ sudo -u postgres createdb marketplace
 ```
 
 2. **Clonar y configurar:**
+
 ```bash
 git clone <your-repo>
 cd up-professional
@@ -463,7 +498,7 @@ cp .env.production.example .env.production
 # Editar .env.production con tus valores
 npx prisma db push
 
-# Frontend  
+# Frontend
 cd ../marketplace-frontend
 npm install
 cp .env.production.example .env.production
@@ -472,17 +507,18 @@ npm run build
 ```
 
 3. **Configurar Nginx:**
+
 ```nginx
 server {
     listen 80;
-    server_name your-domain.com;
-    
+    server_name home-fixed.com;
+
     # Frontend
     location / {
         root /path/to/marketplace-frontend/dist;
         try_files $uri $uri/ /index.html;
     }
-    
+
     # Backend API
     location /api {
         proxy_pass http://localhost:3000;
@@ -499,6 +535,7 @@ server {
 ```
 
 4. **Configurar PM2:**
+
 ```bash
 cd marketplace-backend
 npm install -g pm2
@@ -510,6 +547,7 @@ pm2 save
 ### Despliegue con Docker
 
 1. **Dockerfile Backend:**
+
 ```dockerfile
 FROM node:18-alpine
 WORKDIR /app
@@ -522,8 +560,9 @@ CMD ["npm", "start"]
 ```
 
 2. **Docker Compose:**
+
 ```yaml
-version: '3.8'
+version: "3.8"
 services:
   backend:
     build: ./marketplace-backend
@@ -533,7 +572,7 @@ services:
       - postgres
     environment:
       DATABASE_URL: postgresql://postgres:password@postgres:5432/marketplace
-      
+
   postgres:
     image: postgres:13
     environment:
@@ -564,29 +603,29 @@ name: Deploy
 on:
   push:
     branches: [main]
-    
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      
+
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '18'
-          
+          node-version: "18"
+
       - name: Install and build frontend
         run: |
           cd marketplace-frontend
           npm install
           npm run build
-          
+
       - name: Install backend dependencies
         run: |
           cd marketplace-backend
           npm install --production
-          
+
       - name: Deploy to server
         uses: appleboy/ssh-action@v0.1.5
         with:
@@ -778,12 +817,14 @@ src/
 ### Estándares de Código
 
 **Frontend:**
+
 - Usa **TypeScript** para todo código nuevo
 - Sigue las convenciones de **React Hooks**
 - Usa **Tailwind CSS** para estilos
 - Ejecuta `npm run lint` antes de commit
 
 **Backend:**
+
 - Usa **ES6+** syntax
 - Sigue convenciones **RESTful** para APIs
 - Documenta endpoints con comentarios
@@ -805,6 +846,7 @@ test: add unit tests for booking controller
 ### Testing
 
 **Frontend:**
+
 ```bash
 cd marketplace-frontend
 npm run test        # Ejecutar tests unitarios
@@ -812,6 +854,7 @@ npm run test:e2e    # Tests end-to-end (si disponible)
 ```
 
 **Backend:**
+
 ```bash
 cd marketplace-backend
 npm test           # Ejecutar tests unitarios
@@ -822,20 +865,24 @@ npm run test:api   # Tests de API (si disponible)
 
 ```markdown
 ## Descripción
+
 Breve descripción de los cambios realizados.
 
 ## Tipo de cambio
+
 - [ ] Bug fix
 - [ ] Nueva feature
 - [ ] Breaking change
 - [ ] Documentación
 
 ## Testing
+
 - [ ] Tests existentes pasan
 - [ ] Se agregaron nuevos tests
 - [ ] Se probó manualmente
 
 ## Screenshots
+
 (Si aplica)
 ```
 
@@ -856,18 +903,21 @@ Si encuentras algún problema o tienes preguntas:
 ## 🎯 Roadmap
 
 ### Q1 2025
+
 - [ ] Sistema de chat en tiempo real
 - [ ] Notificaciones push
 - [ ] App móvil (React Native)
 - [ ] Sistema de subscripciones mejorado
 
 ### Q2 2025
+
 - [ ] Integración con Google Calendar
 - [ ] Sistema de reputación avanzado
 - [ ] Multi-idioma completo
 - [ ] Analytics dashboard mejorado
 
 ### Q3 2025
+
 - [ ] Inteligencia artificial para matching
 - [ ] Sistema de recomendaciones
 - [ ] Integración con redes sociales

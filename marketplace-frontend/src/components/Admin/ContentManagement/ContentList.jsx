@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, memo, useMemo, useCallback } from 'react';
 import { 
   Edit, 
   RotateCcw, 
@@ -37,15 +37,15 @@ const ContentList = ({ content, onEdit, onReset, onDelete, onBulkUpdate }) => {
     });
   }, [content, sortBy, sortOrder, showInactive]);
 
-  const handleSelectAll = () => {
+  const handleSelectAll = useCallback(() => {
     if (selectedItems.size === filteredAndSortedContent.length) {
       setSelectedItems(new Set());
     } else {
       setSelectedItems(new Set(filteredAndSortedContent.map(item => item.id)));
     }
-  };
+  }, [selectedItems.size, filteredAndSortedContent]);
 
-  const handleSelectItem = (id) => {
+  const handleSelectItem = useCallback((id) => {
     const newSelected = new Set(selectedItems);
     if (newSelected.has(id)) {
       newSelected.delete(id);
@@ -53,9 +53,9 @@ const ContentList = ({ content, onEdit, onReset, onDelete, onBulkUpdate }) => {
       newSelected.add(id);
     }
     setSelectedItems(newSelected);
-  };
+  }, [selectedItems]);
 
-  const handleBulkReset = async () => {
+  const handleBulkReset = useCallback(async () => {
     const updates = Array.from(selectedItems).map(id => {
       const item = content.find(c => c.id === id);
       return { id, value: item.defaultValue };
@@ -65,11 +65,11 @@ const ContentList = ({ content, onEdit, onReset, onDelete, onBulkUpdate }) => {
       await onBulkUpdate(updates);
       setSelectedItems(new Set());
     } catch (error) {
-      console.error('Error in bulk reset:', error);
+      // Removed console.error for production
     }
-  };
+  }, [selectedItems, content, onBulkUpdate]);
 
-  const getContentPreview = (value, type) => {
+  const getContentPreview = useCallback((value, type) => {
     if (!value) return '';
     
     if (type === 'html') {
@@ -81,9 +81,9 @@ const ContentList = ({ content, onEdit, onReset, onDelete, onBulkUpdate }) => {
     }
     
     return value;
-  };
+  }, []);
 
-  const getCategoryColor = (category) => {
+  const getCategoryColor = useCallback((category) => {
     const colors = {
       hero: 'bg-blue-100 text-blue-800',
       footer: 'bg-gray-100 text-gray-800',
@@ -97,7 +97,7 @@ const ContentList = ({ content, onEdit, onReset, onDelete, onBulkUpdate }) => {
       general: 'bg-gray-100 text-gray-800'
     };
     return colors[category] || colors.general;
-  };
+  }, []);
 
   if (content.length === 0) {
     return (
@@ -305,4 +305,7 @@ const ContentList = ({ content, onEdit, onReset, onDelete, onBulkUpdate }) => {
   );
 };
 
-export default ContentList;
+export default memo(ContentList);
+
+// Add display name for better debugging
+ContentList.displayName = 'ContentList';

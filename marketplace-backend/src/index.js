@@ -35,9 +35,36 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 // Middlewares globales
-app.use(cors());
+// Secure CORS configuration
+const corsOptions = {
+  origin: function (origin, callback) {
+    // Allow requests with no origin (mobile apps, postman, etc.)
+    if (!origin) return callback(null, true);
+    
+    const allowedOrigins = [
+      process.env.FRONTEND_URL || 'http://localhost:5173',
+      process.env.FRONTEND_PROD_URL || 'https://yourdomain.com',
+      'http://localhost:3000', // Development frontend
+      'http://localhost:3001', // Alternative dev port
+      'https://mp-prod-domain.com' // MercadoPago production domain
+    ];
+    
+    if (allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      console.warn(`Blocked CORS request from origin: ${origin}`);
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true, // Allow cookies/auth headers
+  optionsSuccessStatus: 200, // Support legacy browsers
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'x-signature', 'x-request-id']
+};
+
+app.use(cors(corsOptions));
 app.use(morgan("dev"));
-app.use(express.json());
+app.use(express.json({ limit: '10mb' })); // Prevent large payload attacks
 
 // Montaje de rutas bajo /api
 app.use("/api/auth", authRoutes);

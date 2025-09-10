@@ -25,7 +25,7 @@ import { useDashboardAnalytics, useAnalyticsTracker } from "../../../hooks/api/a
 import MetricsChart from "./MetricsChart";
 import LoadingSpinner from "../../../components/LoadingSpinner/LoadingSpinner";
 import ErrorMessage from "../../../components/ErrorMessage/ErrorMessage";
-import Button from "../../../components/template/ui/button/Button";
+import { Button } from "../../../components/atoms/Button/Button";
 
 const AnalyticsTab = () => {
   const [selectedPeriod, setSelectedPeriod] = useState("30d");
@@ -62,7 +62,6 @@ const AnalyticsTab = () => {
 
   const handleExport = (type) => {
     // Export functionality would go here
-    console.log(`Exporting ${type} data for period ${selectedPeriod}`);
   };
 
   if (isLoading) {
