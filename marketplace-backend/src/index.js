@@ -34,6 +34,9 @@ const errorHandler = require("./middlewares/errorHandler");
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// Serve static files from public directory
+app.use(express.static('public'));
+
 // Middlewares globales
 // Secure CORS configuration
 const corsOptions = {
